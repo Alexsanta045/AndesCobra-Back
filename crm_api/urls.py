@@ -4,10 +4,10 @@ from .views import *
 from .serializers import *
 
 
-# router = DefaultRouter()
-# router.register(r'Gestiones', GestionesSerializer, basename='Gestiones') 
+router = DefaultRouter()
+router.register(r'Gestiones', GestionesViewSet, basename='Gestiones') 
 
 
-# utlpatterns = [
-#     path('', include(router.urls)),
-# ]
+urlpatterns = [
+    path('', include(router.urls)),
+]
