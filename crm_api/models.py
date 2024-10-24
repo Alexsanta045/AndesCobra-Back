@@ -16,6 +16,7 @@ class Usuarios(models.Model):
     direccion = models.TextField(max_length=150)
     rol = models.ForeignKey(Roles, on_delete=models.CASCADE)
     
+    
     def __str__(self):
         return f"{self.nit} - {self.nombres} {self.apellidos}"
 
