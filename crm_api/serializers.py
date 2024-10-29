@@ -89,3 +89,125 @@ class GestionesSerializer(serializers.ModelSerializer):
         if instance.fecha:
             representation['fecha'] = instance.fecha.strftime('%d-%m-%y %H:%M')
         return representation
+    
+class ChatSerializer(serializers.ModelSerializer):
+    usuario = serializers.SerializerMethodField()
+    mensaje = serializers.CharField()
+    fecha = serializers.DateTimeField()
+    
+    class Meta:
+        model = Chat
+        fields = ['usuario' , 'mensaje' , 'fecha']
+        
+    def get_usuario(self, obj):
+        return f"{obj.usuario.nombres} {obj.usuario.apellidos}"
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.fecha:
+            representation['fecha'] = instance.fecha.strftime('%d-%m-%y %H:%M')
+        return representation
+    
+class Tipo_identificacionSerializer(serializers.Serializer):
+    class Meta:
+        model = Tipo_identificacion
+        fields = '__all__'
+        
+class PaisSerializer(serializers.Serializer):
+    class Meta:
+        model = Pais
+        fields = '__all__'
+        
+class DepartamentoSerializer(serializers.Serializer):
+    nombre = serializers.CharField()
+    pais = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Departamento
+        fields = ['nombre', 'pais']
+        
+    def get_pais(self, obj):
+        return obj.pais.nombre
+    
+class CiudadSerializer(serializers.Serializer):
+    nombre = serializers.CharField()
+    departamento = serializers.SerializerMethodField()
+    
+    class Meta: 
+        model = Ciudad
+        fields = ['nombre', 'departamento']
+        
+    def get_departamento(self, obj):
+        return obj.departamento.nombre
+    
+class Telefono_clienteSerializer(serializers.Serializer):
+    numero = serializers.CharField()
+    tipo = serializers.CharField()
+    tipo_celular = serializers.CharField()
+    indicativo = serializers.CharField()
+    extension = serializers.CharField()
+    ciudad = serializers.SerializerMethodField()
+    rating = serializers.CharField()
+    departamento = serializers.SerializerMethodField()
+    cliente = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Telefono_cliente
+        fields = ['ciudad', '__all__']
+        
+    def get_ciudad(self, obj):
+        return obj.ciudad.nombre
+    
+    def get_departamento(self, obj):
+        return obj.ciudad.departamento.nombre
+    
+    def get_cliente(self, obj):
+        return obj.telefono.cliente.nombres
+    
+class Direccion_clienteSerializer(serializers.Serializer):
+    ciudad = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Direccion_cliente
+        fields = ['ciudad', '__all__']
+        
+class Direccion_codeudorSerializer(serializers.Serializer):
+    ciudad = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Direccion_codeudor
+        fields = ['ciudad', '__all__']
+        
+class CanalesSerializer(serializers.Serializer):
+    class Meta:
+        model = Canales
+        fields = '__all__'
+        
+class Acuerdo_pagoSerializer(serializers.Serializer):
+    class Meta:
+        model = Acuerdo_pago
+        fields = '__all__'
+        
+class Telefono_codeudorSerializer(serializers.Serializer):
+    numero = serializers.CharField()
+    tipo = serializers.CharField()
+    tipo_celular = serializers.CharField()
+    indicativo = serializers.CharField()
+    extension = serializers.CharField()
+    ciudad = serializers.SerializerMethodField()
+    rating = serializers.CharField()
+    departamento = serializers.SerializerMethodField()
+    codeudor = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Telefono_cliente
+        fields = ['ciudad', '__all__']
+        
+    def get_ciudad(self, obj):
+        return obj.ciudad.nombre
+    
+    def get_departamento(self, obj):
+        return obj.ciudad.departamento.nombre
+    
+    def get_cliente(self, obj):
+        return obj.telefono.cliente.nombres
