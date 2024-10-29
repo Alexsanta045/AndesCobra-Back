@@ -80,7 +80,7 @@ class Canales(models.Model):
     sms = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"telefonico: {self.telefonicon} email: {self.email} visita: {self.visita} whatsapp: {self.whatsapp} sms: {self.sms}"
+        return f"telefonico: {self.telefonico} email: {self.email} visita: {self.visita} whatsapp: {self.whatsapp} sms: {self.sms}"
 
 class Clientes(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
@@ -88,16 +88,14 @@ class Clientes(models.Model):
     nombres = models.CharField(max_length=40)
     apellidos = models.CharField(max_length=30)
     email = models.CharField(max_length=50)
-    campos_opcionales = models.JSONField(default=dict, blank=True)
     canales_autorizados = models.ForeignKey(Canales, on_delete=models.CASCADE)
+    campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
-        return f"{self.nit} - {self.telefono} - {self.nombres}"
+        return f"{self.nit} - {self.nombres}"
     
 class Direccion_cliente(models.Model):
-    pais = models.ForeignKey(Pais, on_delete=models.CASCADE)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE)
     barrio = models.CharField(max_length=50)
     vereda = models.CharField(max_length=20, blank=True)
     calle = models.CharField(max_length=15, blank=True)
@@ -117,15 +115,13 @@ class Codeudores(models.Model):
         return f"{self.nombre} - cliente: {self.cliente}"
     
 class Direccion_codeudor(models.Model):
-    pais = models.ForeignKey(Pais, on_delete=models.CASCADE)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE)
     barrio = models.CharField(max_length=50)
     vereda = models.CharField(max_length=20, blank=True)
     calle = models.CharField(max_length=15, blank=True)
     carrera = models.CharField(max_length=10, blank=True)
     complemento = models.CharField(max_length=70, blank=True)
-    cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
+    codeudor = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"{self.calle} - {self.carrera} - {self.complemento} "

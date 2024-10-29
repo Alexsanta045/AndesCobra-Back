@@ -12,15 +12,11 @@ class UsuariosSerializer(serializers.ModelSerializer):
     apellidos = serializers.CharField()
     email = serializers.EmailField()
     telefono = serializers.CharField()
-    direccion = serializers.CharField()
-    rol = serializers.SerializerMethodField()
+    rol = serializers.CharField(source='rol.nombre')
     
     class Meta:
         model = Usuarios
-        fields = ['nit', 'nombres', 'apellidos', 'email', 'telefono', 'direccion', 'rol']
-        
-    def get_rol(self, obj):
-        return obj.rol.nombre
+        fields = '__all__'
         
 class CampañasSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,6 +24,13 @@ class CampañasSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class ClientesSerializer(serializers.ModelSerializer):
+    nit = serializers.CharField()
+    tipo_id = serializers.CharField()
+    nombres = serializers.CharField()
+    apellidos = serializers.CharField()
+    email = serializers.CharField()
+    canales = serializers.BooleanField()
+    
     class Meta:
         model = Clientes
         fields = '__all__'
@@ -44,17 +47,11 @@ class ReferenciasSerializer(serializers.ModelSerializer):
         
 class ObligacionesSerializer(serializers.ModelSerializer):
     codigo = serializers.CharField()
-    campaña = serializers.SerializerMethodField()
-    cliente = serializers.SerializerMethodField()
+    campaña = serializers.CharField(source='campaña.nombre')
+    cliente = serializers.CharField(source='cliente.nombres')
     class Meta:
         model = Obligaciones
-        fields = ['codigo', 'campaña', 'cliente', 'campos_opcionales']
-        
-    def get_campaña(self, obj):
-        return obj.campaña.nombre
-    
-    def get_cliente(self, obj):
-        return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
+        fields = '__all__'
         
 class PagosSerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,22 +64,16 @@ class ResultadosGestionSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class GestionesSerializer(serializers.ModelSerializer):
-    usuario = serializers.SerializerMethodField()
-    cliente = serializers.SerializerMethodField()
+    usuario = serializers.CharField(source='usuario.nombres')
+    cliente = serializers.CharField(source='cliente.nombres')
     resultado = serializers.CharField(source='resultado.nombre', read_only=True)
     fecha = serializers.DateTimeField()
     comentarios = serializers.CharField(read_only=True)
     
     class Meta:
         model = Gestiones
-        fields = ['usuario', 'cliente', 'resultado', 'fecha', 'comentarios']
+        fields = ['fecha', '__all__']
         
-    def get_usuario(self, obj):
-        return f"{obj.usuario.nombres} {obj.usuario.apellidos}"
-    
-    def get_cliente(self, obj):
-        return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
-    
     # Formatear la fecha sin segundos ni milisegundos
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -91,13 +82,13 @@ class GestionesSerializer(serializers.ModelSerializer):
         return representation
     
 class ChatSerializer(serializers.ModelSerializer):
-    usuario = serializers.SerializerMethodField()
+    usuario = serializers.CharField(source='usuario.nombres')
     mensaje = serializers.CharField()
     fecha = serializers.DateTimeField()
     
     class Meta:
         model = Chat
-        fields = ['usuario' , 'mensaje' , 'fecha']
+        fields = ['fecha', '__all__']
         
     def get_usuario(self, obj):
         return f"{obj.usuario.nombres} {obj.usuario.apellidos}"
@@ -120,63 +111,61 @@ class PaisSerializer(serializers.Serializer):
         
 class DepartamentoSerializer(serializers.Serializer):
     nombre = serializers.CharField()
-    pais = serializers.SerializerMethodField()
+    pais = serializers.CharField(source='pais.nombre',)
     
     class Meta:
         model = Departamento
-        fields = ['nombre', 'pais']
-        
-    def get_pais(self, obj):
-        return obj.pais.nombre
+        fields = '__all__'
     
 class CiudadSerializer(serializers.Serializer):
     nombre = serializers.CharField()
-    departamento = serializers.SerializerMethodField()
+    departamento = serializers.CharField(source='departamento.nombre')
     
     class Meta: 
         model = Ciudad
-        fields = ['nombre', 'departamento']
-        
-    def get_departamento(self, obj):
-        return obj.departamento.nombre
+        fields = '__all__'
     
 class Telefono_clienteSerializer(serializers.Serializer):
+    cliente = serializers.CharField(source='cliente.nombres')
     numero = serializers.CharField()
     tipo = serializers.CharField()
     tipo_celular = serializers.CharField()
     indicativo = serializers.CharField()
     extension = serializers.CharField()
-    ciudad = serializers.SerializerMethodField()
+    ciudad = serializers.CharField(source='ciudad.nombre')
     rating = serializers.CharField()
-    departamento = serializers.SerializerMethodField()
-    cliente = serializers.SerializerMethodField()
+    departamento = serializers.CharField(source='departamento.nombre')
     
     class Meta:
         model = Telefono_cliente
-        fields = ['ciudad', '__all__']
-        
-    def get_ciudad(self, obj):
-        return obj.ciudad.nombre
-    
-    def get_departamento(self, obj):
-        return obj.ciudad.departamento.nombre
-    
-    def get_cliente(self, obj):
-        return obj.telefono.cliente.nombres
+        fields =  '__all__'
     
 class Direccion_clienteSerializer(serializers.Serializer):
-    ciudad = serializers.SerializerMethodField()
+    cliente = serializers.CharField(source='cliente.nombres')
+    ciudad = serializers.CharField(source='ciudad.nombre')
+    barrio = serializers.CharField()
+    vereda = serializers.CharField()
+    calle = serializers.CharField()
+    carrera = serializers.CharField()
+    complemento = serializers.CharField()
     
     class Meta:
         model = Direccion_cliente
-        fields = ['ciudad', '__all__']
+        fields = '__all__'
         
 class Direccion_codeudorSerializer(serializers.Serializer):
-    ciudad = serializers.SerializerMethodField()
+    codeudor = serializers.CharField(source='codeudor.nombres')
+    ciudad = serializers.CharField(source='ciudad.nombre')
+    barrio = serializers.CharField()
+    vereda = serializers.CharField()
+    calle = serializers.CharField()
+    carrera = serializers.CharField()
+    complemento = serializers.CharField()
     
     class Meta:
-        model = Direccion_codeudor
-        fields = ['ciudad', '__all__']
+        model = Direccion_cliente
+        fields = '__all__'
+
         
 class CanalesSerializer(serializers.Serializer):
     class Meta:
@@ -189,25 +178,17 @@ class Acuerdo_pagoSerializer(serializers.Serializer):
         fields = '__all__'
         
 class Telefono_codeudorSerializer(serializers.Serializer):
+    codeudor = serializers.CharField(source='codeudor.nombres')
     numero = serializers.CharField()
     tipo = serializers.CharField()
     tipo_celular = serializers.CharField()
     indicativo = serializers.CharField()
     extension = serializers.CharField()
-    ciudad = serializers.SerializerMethodField()
+    ciudad = serializers.CharField(source='ciudad.nombre')
     rating = serializers.CharField()
-    departamento = serializers.SerializerMethodField()
-    codeudor = serializers.SerializerMethodField()
+    departamento = serializers.CharField(source='departamento.nombre')
     
     class Meta:
         model = Telefono_cliente
-        fields = ['ciudad', '__all__']
-        
-    def get_ciudad(self, obj):
-        return obj.ciudad.nombre
+        fields = '__all__'
     
-    def get_departamento(self, obj):
-        return obj.ciudad.departamento.nombre
-    
-    def get_cliente(self, obj):
-        return obj.telefono.cliente.nombres
