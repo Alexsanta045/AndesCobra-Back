@@ -18,6 +18,4 @@ router.register(r'Gestiones', GestionesViewSet, basename='Gestiones')
 
 
 
-urlpatterns = [
-    path('', include(router.urls)),
-]
+urlpatterns = router.urls
