@@ -11,10 +11,13 @@ class Usuarios(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
     nombres = models.CharField(max_length=40)
     apellidos = models.CharField(max_length=30)
-    email = models.CharField(max_length=50)
+    email = models.EmailField(max_length=50)
     telefono = models.CharField(max_length=10)
     direccion = models.TextField(max_length=150)
     rol = models.ForeignKey(Roles, on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    estado = models.BooleanField(default=True) 
+    
     
     
     def __str__(self):
@@ -23,6 +26,8 @@ class Usuarios(models.Model):
 class Campañas(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField(max_length=500)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True, blank=True)
     
     def __str__(self):
         return self.nombre
@@ -30,7 +35,7 @@ class Campañas(models.Model):
 class CampañasUsuarios(models.Model):
     usuarios_id = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
     campañas_id = models.ForeignKey(Campañas, on_delete=models.CASCADE)
-    fecha_asignacion = models.DateField()
+    fecha_asignacion = models.DateField(auto_now_add=True)
     
     def __str__(self):
         return f"usuario: {self.usuarios_id} -  campaña: {self.campañas_id}"
@@ -102,3 +107,7 @@ class Gestiones(models.Model):
     
     def __str__(self):
         return f"{self.usuario} - {self.cliente} - {self.resultado} - {self.fecha}"
+
+
+
+

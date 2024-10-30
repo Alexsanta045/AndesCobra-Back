@@ -15,6 +15,9 @@ router.register(r'Obligaciones', ObligacionesViewSet, basename='Obligaciones')
 router.register(r'Pagos', PagosViewSet, basename='Pagos')
 router.register(r'ResultadosGestion', ResultadosGestionViewSet, basename='ResultadosGestion')
 router.register(r'Gestiones', GestionesViewSet, basename='Gestiones') 
+router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUsuario') 
+
+
 
 
 
