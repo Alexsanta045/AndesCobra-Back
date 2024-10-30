@@ -13,7 +13,6 @@ class Usuarios(models.Model):
     apellidos = models.CharField(max_length=30)
     email = models.CharField(max_length=50)
     telefono = models.CharField(max_length=10)
-    direccion = models.TextField(max_length=150)
     rol = models.ForeignKey(Roles, on_delete=models.CASCADE)
     
     
