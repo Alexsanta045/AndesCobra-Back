@@ -44,7 +44,7 @@ class ClientesSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Clientes
-        fields = [ 'nit', 'tipo_id', 'nombres', 'apellidos', 'email', 'canales_autorizados']
+        fields = [ 'nit', 'tipo_id', 'nombres', 'apellidos', 'email', 'canales_autorizados', 'campos_opcionales']
         
         
 class CodeudoresSerializer(serializers.ModelSerializer):
@@ -60,10 +60,13 @@ class ReferenciasSerializer(serializers.ModelSerializer):
 class ObligacionesSerializer(serializers.ModelSerializer):
     codigo = serializers.CharField()
     campaña = serializers.CharField(source='campaña.nombre')
-    cliente = serializers.CharField(source='cliente.nombres')
+    cliente = serializers.SerializerMethodField()
     class Meta:
         model = Obligaciones
         fields = '__all__'
+        
+    def get_cliente(self, obj):
+        return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
         
 class PagosSerializer(serializers.ModelSerializer):
     class Meta:
