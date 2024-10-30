@@ -24,7 +24,7 @@ class UsuariosSerializer(serializers.ModelSerializer):
 class CampañasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Campañas
-        fields = '__all__'
+        fields = ['id' , 'nombre']
         
 class CanalesSerializer(serializers.Serializer):
     telefonico = serializers.BooleanField()
