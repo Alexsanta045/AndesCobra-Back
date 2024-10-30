@@ -24,9 +24,11 @@ class Usuarios(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
     nombres = models.CharField(max_length=40)
     apellidos = models.CharField(max_length=30)
-    email = models.CharField(max_length=50)
+    email = models.EmailField(max_length=50)
     telefono = models.CharField(max_length=10)
     rol = models.ForeignKey(Roles, on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    estado = models.BooleanField(default=True)
     
     def __str__(self):
         return f"{self.nit} - {self.nombres} {self.apellidos}"
@@ -44,6 +46,7 @@ class Campañas(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField(max_length=500)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateField()
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
@@ -52,7 +55,7 @@ class Campañas(models.Model):
 class CampañasUsuarios(models.Model):
     usuarios_id = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
     campañas_id = models.ForeignKey(Campañas, on_delete=models.CASCADE)
-    fecha_asignacion = models.DateField()
+    fecha_asignacion = models.DateField(auto_now_add=True)
     
     def __str__(self):
         return f"usuario: {self.usuarios_id} -  campaña: {self.campañas_id}"
@@ -84,31 +87,6 @@ class Ciudad(models.Model):
     def __str__(self):
         return self.nombre
     
-class Telefono(models.Model):
-    numero = models.CharField(max_length=10, primary_key=True)
-    tipo = models.CharField(max_length=30)
-    tipo_celular = models.CharField(max_length=30)
-    indicativo = models.CharField(max_length=5)
-    extension = models.CharField(max_length=5)
-    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    departamento = models.CharField(max_length=50)
-    rating = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.numero
-    
-class Direccion(models.Model):
-    pais = models.ForeignKey(Pais, on_delete=models.CASCADE)
-    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE)
-    barrio = models.CharField(max_length=50)
-    vereda = models.CharField(max_length=20, blank=True)
-    calle = models.CharField(max_length=15, blank=True)
-    carrera = models.CharField(max_length=10, blank=True)
-    complemento = models.CharField(max_length=70, blank=True)
-    
-    def __str__(self):
-        return f"{self.calle} - {self.carrera} - {self.complemento} "
 
 class Canales(models.Model):
     telefonico = models.BooleanField(default=True)
@@ -117,31 +95,79 @@ class Canales(models.Model):
     email = models.BooleanField(default=False)
     sms = models.BooleanField(default=False)
     
+    def __str__(self):
+        return f"telefonico: {self.telefonico} email: {self.email} visita: {self.visita} whatsapp: {self.whatsapp} sms: {self.sms}"
 
 class Clientes(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
     tipo_id = models.ForeignKey(Tipo_identificacion, on_delete=models.CASCADE)
-    telefono = models.ForeignKey(Telefono, on_delete=models.CASCADE)
-    direccion = models.ForeignKey(Direccion, on_delete=models.CASCADE)
     nombres = models.CharField(max_length=40)
     apellidos = models.CharField(max_length=30)
     email = models.CharField(max_length=50)
-    campos_opcionales = models.JSONField(default=dict, blank=True)
     canales_autorizados = models.ForeignKey(Canales, on_delete=models.CASCADE)
+    campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
-        return f"{self.nit} - {self.telefono} - {self.nombres}"
+        return f"{self.nit} - {self.nombres}"
+    
+class Direccion_cliente(models.Model):
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
+    barrio = models.CharField(max_length=50)
+    vereda = models.CharField(max_length=20, blank=True)
+    calle = models.CharField(max_length=15, blank=True)
+    carrera = models.CharField(max_length=10, blank=True)
+    complemento = models.CharField(max_length=70, blank=True)
+    cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.calle} - {self.carrera} - {self.complemento} "
 
 class Codeudores(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
     nombre = models.CharField(max_length=30)
-    telefono = models.ForeignKey(Telefono, on_delete=models.CASCADE)
-    direccion = models.ForeignKey(Direccion, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"{self.nombre} - cliente: {self.cliente}"
+    
+class Direccion_codeudor(models.Model):
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
+    barrio = models.CharField(max_length=50)
+    vereda = models.CharField(max_length=20, blank=True)
+    calle = models.CharField(max_length=15, blank=True)
+    carrera = models.CharField(max_length=10, blank=True)
+    complemento = models.CharField(max_length=70, blank=True)
+    codeudor = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.calle} - {self.carrera} - {self.complemento} "
 
+class Telefono_cliente(models.Model):
+    numero = models.CharField(max_length=10, primary_key=True)
+    cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=30, blank=True)
+    tipo_celular = models.CharField(max_length=30, blank=True)
+    indicativo = models.CharField(max_length=5, blank=True)
+    extension = models.CharField(max_length=5)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.numero
+    
+class Telefono_codeudor(models.Model):
+    numero = models.CharField(max_length=10, primary_key=True)
+    codeudor = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=30)
+    tipo_celular = models.CharField(max_length=30)
+    indicativo = models.CharField(max_length=5)
+    extension = models.CharField(max_length=5)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.numero
+    
 class Referencias(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
     nombre = models.CharField(max_length=40)
@@ -166,11 +192,10 @@ class Obligaciones(models.Model):
     valor_mora = models.FloatField()
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
-    
     def __str__(self):
         return f"{self.campaña} - {self.cliente}"
     
-class Acuerdo_Pago(models.Model):
+class Acuerdo_pago(models.Model):
     valor_cuota = models.FloatField()
     fecha_pago = models.DateField()
     codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
