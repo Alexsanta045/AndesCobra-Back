@@ -1,5 +1,41 @@
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth.models import User
+from .models import CustomUser, Roles
+from django.db import transaction, IntegrityError
+
+class UserSerializer(serializers.ModelSerializer):
+    role = serializers.StringRelatedField(source='role.nombre', required=False)  # Cambia a nombre
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'password', 'role']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'email': {'required': True}
+        }
+
+    # Mantén la función create como está
+
+
+    def create(self, validated_data):
+        with transaction.atomic():
+            # Extraer role y password
+            role = validated_data.pop('role', None)
+            password = validated_data.pop('password')
+            
+            # Crear usuario
+            user = CustomUser.objects.create_user(
+                password=password,
+                **validated_data
+            )
+            
+            # Asignar rol si existe
+            if role:
+                user.role = role
+                user.save()
+            
+            return user
 
 class RolesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,7 +66,7 @@ class CampañasSerializer(serializers.ModelSerializer):
 class ClientesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clientes
-        fields = '__all__'
+        fields = '__all__' 
         
 class CodeudoresSerializer(serializers.ModelSerializer):
     class Meta:
@@ -89,3 +125,4 @@ class GestionesSerializer(serializers.ModelSerializer):
         if instance.fecha:
             representation['fecha'] = instance.fecha.strftime('%d-%m-%y %H:%M')
         return representation
+
