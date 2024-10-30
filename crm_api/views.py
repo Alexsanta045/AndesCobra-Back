@@ -4,6 +4,7 @@ from .models import *
 from .serializers import *
 
 class RolesViewSet(viewsets.ModelViewSet):
+    
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
     

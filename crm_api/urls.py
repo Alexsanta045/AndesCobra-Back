@@ -30,6 +30,4 @@ router.register(r'canales', CanalesViewSet, basename='Canales')
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
 
 
-urlpatterns = [
-    path('', include(router.urls)),
-]
+urlpatterns = router.urls
