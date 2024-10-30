@@ -42,4 +42,5 @@ class ResultadosGestionViewSet(viewsets.ModelViewSet):
 class GestionesViewSet(viewsets.ModelViewSet):
     queryset = Gestiones.objects.all()
     serializer_class = GestionesSerializer
+
     
