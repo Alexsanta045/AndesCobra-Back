@@ -23,17 +23,29 @@ class CampañasSerializer(serializers.ModelSerializer):
         model = Campañas
         fields = '__all__'
         
+class CanalesSerializer(serializers.Serializer):
+    telefonico = serializers.BooleanField()
+    visita = serializers.BooleanField()
+    whatsapp = serializers.BooleanField()
+    email = serializers.BooleanField()
+    sms = serializers.BooleanField()
+    
+    class Meta:
+        model = Canales
+        fields = '__all__'
+        
 class ClientesSerializer(serializers.ModelSerializer):
     nit = serializers.CharField()
     tipo_id = serializers.CharField()
     nombres = serializers.CharField()
     apellidos = serializers.CharField()
     email = serializers.CharField()
-    canales = serializers.BooleanField()
+    canales_autorizados = CanalesSerializer(read_only=True)
     
     class Meta:
         model = Clientes
-        fields = '__all__'
+        fields = [ 'nit', 'tipo_id', 'nombres', 'apellidos', 'email', 'canales_autorizados']
+        
         
 class CodeudoresSerializer(serializers.ModelSerializer):
     class Meta:
@@ -167,12 +179,12 @@ class Direccion_codeudorSerializer(serializers.Serializer):
         fields = '__all__'
 
         
-class CanalesSerializer(serializers.Serializer):
-    class Meta:
-        model = Canales
-        fields = '__all__'
         
 class Acuerdo_pagoSerializer(serializers.Serializer):
+    valor_cuota = serializers.CharField()
+    fecha_pago = serializers.CharField()
+    codigo_obligacion = serializers.CharField()
+    
     class Meta:
         model = Acuerdo_pago
         fields = '__all__'

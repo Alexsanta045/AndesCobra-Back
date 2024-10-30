@@ -129,9 +129,9 @@ class Direccion_codeudor(models.Model):
 class Telefono_cliente(models.Model):
     numero = models.CharField(max_length=10, primary_key=True)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
-    tipo = models.CharField(max_length=30)
-    tipo_celular = models.CharField(max_length=30)
-    indicativo = models.CharField(max_length=5)
+    tipo = models.CharField(max_length=30, blank=True)
+    tipo_celular = models.CharField(max_length=30, blank=True)
+    indicativo = models.CharField(max_length=5, blank=True)
     extension = models.CharField(max_length=5)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
@@ -141,7 +141,7 @@ class Telefono_cliente(models.Model):
     
 class Telefono_codeudor(models.Model):
     numero = models.CharField(max_length=10, primary_key=True)
-    cliente = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
+    codeudor = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
     tipo = models.CharField(max_length=30)
     tipo_celular = models.CharField(max_length=30)
     indicativo = models.CharField(max_length=5)
