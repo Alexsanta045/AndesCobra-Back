@@ -4,6 +4,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import *
 from .serializers import *
+from . import auth_routes
+
 
 
 router = DefaultRouter()
@@ -33,4 +35,9 @@ router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUs
 
 
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('', include(router.urls)),
+    path('login/', auth_routes.login, name='login'),
+    path('register/', auth_routes.register, name='register'),
+    path('profile/', auth_routes.profile, name='profile'),
+]

@@ -12,3 +12,4 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("crm/", include('crm_api.urls'))
 ]
+
