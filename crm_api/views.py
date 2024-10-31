@@ -94,3 +94,8 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
     queryset = Acuerdo_pago.objects.all()
     serializer_class = Acuerdo_pagoSerializer
     
+    
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer    
+    

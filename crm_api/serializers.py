@@ -5,8 +5,8 @@ from .models import CustomUser, Roles
 from django.db import transaction, IntegrityError
 
 class UserSerializer(serializers.ModelSerializer):
-    role = serializers.StringRelatedField(source='role.nombre', required=False)  # Cambia a nombre
-
+    role = serializers.CharField()  # Cambia a nombre
+        
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'password', 'role']
@@ -267,3 +267,9 @@ class CampañasUsuariosSerializer(serializers.ModelSerializer):
         # Obtén el nombre de la campaña
         return obj.campañas_id.nombre
     
+
+
+class CustomUserSerializer(serializers.Serializer):
+      class Meta: 
+          model = CustomUser
+          fields = ['__all__']
