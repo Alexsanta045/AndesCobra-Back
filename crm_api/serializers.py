@@ -5,8 +5,8 @@ from .models import CustomUser, Roles
 from django.db import transaction, IntegrityError
 
 class UserSerializer(serializers.ModelSerializer):
-    role = serializers.CharField()  # Cambia a nombre
-        
+    role = serializers.CharField(required=False)  # Cambiar a CharField si se recibe como nombre
+
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'password', 'role']
@@ -15,27 +15,25 @@ class UserSerializer(serializers.ModelSerializer):
             'email': {'required': True}
         }
 
-    # Mantén la función create como está
-
-
     def create(self, validated_data):
-        with transaction.atomic():
-            # Extraer role y password
-            role = validated_data.pop('role', None)
-            password = validated_data.pop('password')
-            
-            # Crear usuario
-            user = CustomUser.objects.create_user(
-                password=password,
-                **validated_data
-            )
-            
-            # Asignar rol si existe
-            if role:
+        role_name = validated_data.pop('role', None)
+        password = validated_data.pop('password')
+        
+        user = CustomUser.objects.create_user(
+            password=password,
+            **validated_data
+        )
+
+        if role_name:
+            # Buscar el rol por nombre
+            try:
+                role = Roles.objects.get(nombre=role_name)
                 user.role = role
                 user.save()
-            
-            return user
+            except Roles.DoesNotExist:
+                raise serializers.ValidationError({"role": "Este rol no existe."})
+        
+        return user
 
 
 class RolesSerializer(serializers.ModelSerializer):

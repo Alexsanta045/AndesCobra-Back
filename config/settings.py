@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+<<<<<<< HEAD
     'rest_framework_simplejwt',
     "crm_api",
     "rest_framework.authtoken",
@@ -52,6 +53,15 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
+=======
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    "crm_api",  
+
+]
+
+MIDDLEWARE = [
+>>>>>>> d44ac47dfa1f8a3056aaaecc1505e426cfe82073
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
