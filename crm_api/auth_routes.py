@@ -29,15 +29,6 @@ def login(request):
 
     return Response({"token": token.key, "user": serializer.data}, status=status.HTTP_200_OK)
 
-# Registro
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from django.db import transaction
-from .models import CustomUser
-from .serializers import UserSerializer
-from rest_framework.authtoken.models import Token
-
 @api_view(['POST'])
 def register(request):
     serializer = UserSerializer(data=request.data)
@@ -59,8 +50,6 @@ def register(request):
                 'detail': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
             
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Perfil
