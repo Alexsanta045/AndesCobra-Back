@@ -161,6 +161,7 @@ class Tipo_identificacionSerializer(serializers.Serializer):
         fields = '__all__'
         
 class PaisSerializer(serializers.Serializer):
+    nombre = serializers.CharField()
     class Meta:
         model = Pais
         fields = '__all__'

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 from .views import *
 from .serializers import *
@@ -37,7 +37,6 @@ router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUs
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('login/', auth_routes.login, name='login'),
-    path('register/', auth_routes.register, name='register'),
-    path('profile/', auth_routes.profile, name='profile'),
+    re_path('login', auth_routes.login),
+    re_path('register', auth_routes.register)
 ]
