@@ -1,25 +1,36 @@
 from django.shortcuts import render
+from django.contrib.auth.models import User
 from rest_framework import viewsets
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from .models import *
 from .serializers import *
+
 
 class RolesViewSet(viewsets.ModelViewSet):
     
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
-    
+
 class UsuariosViewSet(viewsets.ModelViewSet):
     queryset = Usuarios.objects.all()
     serializer_class = UsuariosSerializer
-    
+
+
 class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
     serializer_class = CampañasSerializer
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     
 class ClientesViewSet(viewsets.ModelViewSet):
     queryset = Clientes.objects.all()
     serializer_class = ClientesSerializer
-    
+ 
 class CodeudoresViewSet(viewsets.ModelViewSet):
     queryset = Codeudores.objects.all()
     serializer_class = CodeudoresSerializer
@@ -27,11 +38,11 @@ class CodeudoresViewSet(viewsets.ModelViewSet):
 class ReferenciasViewSet(viewsets.ModelViewSet):
     queryset = Referencias.objects.all()
     serializer_class = ReferenciasSerializer
-    
+   
 class ObligacionesViewSet(viewsets.ModelViewSet):
     queryset = Obligaciones.objects.all()
     serializer_class = ObligacionesSerializer
-    
+   
 class PagosViewSet(viewsets.ModelViewSet):
     queryset = Pagos.objects.all()
     serializer_class = PagosSerializer
@@ -39,7 +50,8 @@ class PagosViewSet(viewsets.ModelViewSet):
 class ResultadosGestionViewSet(viewsets.ModelViewSet):
     queryset = ResultadosGestion.objects.all()
     serializer_class = ResultadosGestionSerializer
-    
+
+
 class GestionesViewSet(viewsets.ModelViewSet):
     queryset = Gestiones.objects.all()
     serializer_class = GestionesSerializer

@@ -17,7 +17,7 @@ class Usuarios(models.Model):
     
     def __str__(self):
         return f"{self.nit} - {self.nombres} {self.apellidos}"
-    
+                                
 class Chat(models.Model):
     usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
     mensaje = models.TextField(max_length=500)
