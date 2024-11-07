@@ -4,9 +4,12 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import *
 from .serializers import *
+from . import auth_routes
+
 
 
 router = DefaultRouter()
+
 router.register(r'roles', RolesViewSet, basename='Roles')
 router.register(r'usuarios', UsuariosViewSet, basename='Usuarios')
 router.register(r'campanas', CampañasViewSet, basename='Campañas')
@@ -28,6 +31,13 @@ router.register(r'telefono_codeudor', Telefono_codeudorViewSet, basename='Telefo
 router.register(r'direccion_codeudor', Direccion_codeudorViewSet, basename='Dirección codeudor')
 router.register(r'canales', CanalesViewSet, basename='Canales')
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
+router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUsuario') 
 
 
-urlpatterns = router.urls
+
+urlpatterns = [
+    path('', include(router.urls)),
+    path('login/', auth_routes.login, name='login'),
+    path('register/', auth_routes.register, name='register'),
+    path('profile/', auth_routes.profile, name='profile'),
+]

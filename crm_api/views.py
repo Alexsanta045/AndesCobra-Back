@@ -55,6 +55,11 @@ class ResultadosGestionViewSet(viewsets.ModelViewSet):
 class GestionesViewSet(viewsets.ModelViewSet):
     queryset = Gestiones.objects.all()
     serializer_class = GestionesSerializer
+    
+    
+class CampañaUsuarioViewSet(viewsets.ModelViewSet):
+    queryset = CampañasUsuarios.objects.all()
+    serializer_class = CampañasUsuariosSerializer    
 
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()

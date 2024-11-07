@@ -1,11 +1,47 @@
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth.models import User
+from .models import CustomUser, Roles
+from django.db import transaction, IntegrityError
+
+class UserSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(required=False)  # Cambiar a CharField si se recibe como nombre
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'password', 'role']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'email': {'required': True}
+        }
+
+    def create(self, validated_data):
+        role_name = validated_data.pop('role', None)
+        password = validated_data.pop('password')
+        
+        user = CustomUser.objects.create_user(
+            password=password,
+            **validated_data
+        )
+
+        if role_name:
+            # Buscar el rol por nombre
+            try:
+                role = Roles.objects.get(nombre=role_name)
+                user.role = role
+                user.save()
+            except Roles.DoesNotExist:
+                raise serializers.ValidationError({"role": "Este rol no existe."})
+        
+        return user
+
 
 class RolesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Roles
         fields = '__all__'
-        
+
+
 class UsuariosSerializer(serializers.ModelSerializer):
     nit = serializers.CharField()
     nombres = serializers.CharField()
@@ -17,7 +53,8 @@ class UsuariosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuarios
         fields = '__all__'
-        
+
+
 class CampañasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Campañas
@@ -44,44 +81,51 @@ class ClientesSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Clientes
-        fields = [ 'nit', 'tipo_id', 'nombres', 'apellidos', 'email', 'canales_autorizados']
+        fields = [ 'nit', 'tipo_id', 'nombres', 'apellidos', 'email', 'canales_autorizados', 'campos_opcionales']
         
         
 class CodeudoresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Codeudores
         fields = '__all__'
-        
+
+
 class ReferenciasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Referencias
         fields = '__all__'
-        
+
+
 class ObligacionesSerializer(serializers.ModelSerializer):
     codigo = serializers.CharField()
     campaña = serializers.CharField(source='campaña.nombre')
-    cliente = serializers.CharField(source='cliente.nombres')
+    cliente = serializers.SerializerMethodField()
     class Meta:
         model = Obligaciones
         fields = '__all__'
+        
+    def get_cliente(self, obj):
+        return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
         
 class PagosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pagos
         fields = '__all__'
-        
+
+
 class ResultadosGestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResultadosGestion
         fields = '__all__'
-        
+
+
 class GestionesSerializer(serializers.ModelSerializer):
     usuario = serializers.CharField(source='usuario.nombres')
     cliente = serializers.CharField(source='cliente.nombres')
     resultado = serializers.CharField(source='resultado.nombre', read_only=True)
     fecha = serializers.DateTimeField()
     comentarios = serializers.CharField(read_only=True)
-    
+
     class Meta:
         model = Gestiones
         fields = ['fecha', '__all__']
@@ -203,4 +247,21 @@ class Telefono_codeudorSerializer(serializers.Serializer):
     class Meta:
         model = Telefono_cliente
         fields = '__all__'
-    
+        
+
+class CampañasUsuariosSerializer(serializers.ModelSerializer):
+    nombre_usuario = serializers.SerializerMethodField()
+    nombre_campaña = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CampañasUsuarios
+        fields = '__all__'  
+
+    def get_nombre_usuario(self, obj):
+        # Obtén el nombre completo del usuario
+        return f"{obj.usuarios_id.nombres} {obj.usuarios_id.apellidos}"
+
+    def get_nombre_campaña(self, obj):
+        # Obtén el nombre de la campaña
+        return obj.campañas_id.nombre
+
