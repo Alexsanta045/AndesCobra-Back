@@ -1,7 +1,10 @@
-from django.shortcuts import render
+
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
+from django_filters.rest_framework import DjangoFilterBackend
+
+
 
 class RolesViewSet(viewsets.ModelViewSet):
     
@@ -43,6 +46,7 @@ class ResultadosGestionViewSet(viewsets.ModelViewSet):
 class GestionesViewSet(viewsets.ModelViewSet):
     queryset = Gestiones.objects.all()
     serializer_class = GestionesSerializer
+    filter_backends = (DjangoFilterBackend,)
 
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()

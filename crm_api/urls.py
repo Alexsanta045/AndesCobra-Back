@@ -4,6 +4,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import *
 from .serializers import *
+from .pagos.EjecutarPagos import EjecutarPagos
+from .pagos.PagosMasivos import PagosMasivos
 
 
 router = DefaultRouter()
@@ -30,4 +32,8 @@ router.register(r'canales', CanalesViewSet, basename='Canales')
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
 
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('', include(router.urls)),
+    path('ejecutar_pagos/', EjecutarPagos.as_view(), name='ejecutar_pagos'),
+    path('pagos_masivos/', PagosMasivos.as_view(), name='pagos_masivos'),
+]
