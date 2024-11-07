@@ -1,11 +1,47 @@
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth.models import User
+from .models import CustomUser, Roles
+from django.db import transaction, IntegrityError
+
+class UserSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(required=False)  # Cambiar a CharField si se recibe como nombre
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'password', 'role']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'email': {'required': True}
+        }
+
+    def create(self, validated_data):
+        role_name = validated_data.pop('role', None)
+        password = validated_data.pop('password')
+        
+        user = CustomUser.objects.create_user(
+            password=password,
+            **validated_data
+        )
+
+        if role_name:
+            # Buscar el rol por nombre
+            try:
+                role = Roles.objects.get(nombre=role_name)
+                user.role = role
+                user.save()
+            except Roles.DoesNotExist:
+                raise serializers.ValidationError({"role": "Este rol no existe."})
+        
+        return user
+
 
 class RolesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Roles
         fields = '__all__'
-        
+
+
 class UsuariosSerializer(serializers.ModelSerializer):
     nit = serializers.CharField()
     nombres = serializers.CharField()
@@ -28,6 +64,11 @@ class UsuariosSerializer(serializers.ModelSerializer):
 class CampañasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Campañas
+        fields = '__all__'
+        
+class CampañasUsuariosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CampañasUsuarios
         fields = '__all__'
         
 class CanalesSerializer(serializers.Serializer):
@@ -70,7 +111,8 @@ class ReferenciasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Referencias
         fields = '__all__'
-        
+
+
 class ObligacionesSerializer(serializers.ModelSerializer):
     codigo = serializers.CharField()
     campaña = serializers.CharField()
@@ -124,14 +166,15 @@ class ResultadosGestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResultadosGestion
         fields = '__all__'
-        
+
+
 class GestionesSerializer(serializers.ModelSerializer):
     usuario = serializers.CharField(source='usuario.nombres')
     cliente = serializers.CharField(source='cliente.nombres')
     resultado = serializers.CharField(source='resultado.nombre', read_only=True)
     fecha = serializers.DateTimeField()
     comentarios = serializers.CharField(read_only=True)
-    
+
     class Meta:
         model = Gestiones
         fields = '__all__'

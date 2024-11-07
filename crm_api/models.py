@@ -1,17 +1,30 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser, Group, Permission
 
 
 class Roles(models.Model):
     nombre = models.CharField(max_length=25)
-    
+
     def __str__(self):
         return self.nombre
+
+    class Meta:
+        db_table = 'roles'  # Opcional: especifica el nombre de la tabla
+
+class CustomUser(AbstractUser):
+    role = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    class Meta:
+        db_table = 'custom_user'  
+
+    def __str__(self):
+        return self.username
 
 class Usuarios(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
     nombres = models.CharField(max_length=40)
     apellidos = models.CharField(max_length=30)
-    email = models.CharField(max_length=50)
+    email = models.EmailField(max_length=50)
     telefono = models.CharField(max_length=10)
     rol = models.ForeignKey(Roles, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -42,7 +55,7 @@ class Campañas(models.Model):
 class CampañasUsuarios(models.Model):
     usuarios_id = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
     campañas_id = models.ForeignKey(Campañas, on_delete=models.CASCADE)
-    fecha_asignacion = models.DateField()
+    fecha_asignacion = models.DateField(auto_now_add=True)
     
     def __str__(self):
         return f"usuario: {self.usuarios_id} -  campaña: {self.campañas_id}"
