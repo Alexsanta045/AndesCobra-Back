@@ -60,6 +60,7 @@ class PagosMasivos(APIView):
                         valor=valor,
                         fecha=fecha_pago,
                     )
+                    # inserta los pagos al arreglo
                     nuevos_pagos.append(pago)
                 except :
                     Response(
@@ -72,10 +73,10 @@ class PagosMasivos(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                     )
                         
-                    # inserta los pagos al arreglo
             except ObjectDoesNotExist:
                 print(f"Obligación no encontrada para el número: {row['Obligacion']}")
-                
+        
+        # insertar en bloque todos los pagos del archivo
         Pagos.objects.bulk_create(nuevos_pagos)
         
         return Response(status=status.HTTP_201_CREATED)
