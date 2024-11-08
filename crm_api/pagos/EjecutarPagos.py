@@ -1,8 +1,9 @@
 from rest_framework import status
 from rest_framework.views import APIView
-from ..models import Obligaciones, Pagos
+from ..models import Obligaciones, Pagos, Acuerdo_pago
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
+from datetime import datetime, timedelta
 
 class EjecutarPagos(APIView):
 
@@ -43,7 +44,6 @@ class EjecutarPagos(APIView):
             )
         
         # Aplicar el pago a valor_mora y ajustar el saldo restante en valor_pagado
-        # Restar del valor de mora y ajustar el valor pagado restante
         if obligacion.valor_mora > 0:
             if valor_pagado >= obligacion.valor_mora:
                 valor_pagado -= obligacion.valor_mora
@@ -52,7 +52,6 @@ class EjecutarPagos(APIView):
                 obligacion.valor_mora -= valor_pagado
                 valor_pagado = 0
 
-        
         # Verificar si queda algún saldo para aplicar al capital
         if valor_pagado <= 0:
             obligacion.save()
@@ -86,13 +85,13 @@ class EjecutarPagos(APIView):
             )
         
         # Si el saldo restante es mayor al valor_capital, notificar que el pago excede el saldo
-        except :
-            Response(
-            {
-                'error': 'Error al efectuar el pago',
-                'saldo_pendiente': obligacion.valor_capital,
-                'saldo_mora': obligacion.valor_mora
-                
-            },
-            status=status.HTTP_400_BAD_REQUEST,
+        except Exception as e:
+            return Response(
+                {
+                    'error': 'Error al efectuar el pago',
+                    'saldo_pendiente': obligacion.valor_capital,
+                    'saldo_mora': obligacion.valor_mora,
+                    'details': str(e),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
