@@ -5,7 +5,7 @@ from .models import CustomUser, Roles
 from django.db import transaction, IntegrityError
 
 class UserSerializer(serializers.ModelSerializer):
-    role = serializers.CharField(required=False)  # Cambiar a CharField si se recibe como nombre
+    role = serializers.CharField(required=False) 
 
     class Meta:
         model = CustomUser
