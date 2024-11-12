@@ -13,7 +13,6 @@ from . import auth_routes
 router = DefaultRouter()
 
 router.register(r'roles', RolesViewSet, basename='Roles')
-router.register(r'usuarios', UsuariosViewSet, basename='Usuarios')
 router.register(r'campanas', CampañasViewSet, basename='Campañas')
 router.register(r'clientes', ClientesViewSet, basename='Clientes')
 router.register(r'telefono_cliente', Telefono_clienteViewSet, basename='Telefono cliente')
@@ -34,6 +33,8 @@ router.register(r'direccion_codeudor', Direccion_codeudorViewSet, basename='Dire
 router.register(r'canales', CanalesViewSet, basename='Canales')
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
 router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUsuario') 
+router.register(r'CustomUser', CustomUserViewSet, basename='custom-user') 
+
 
 
 

@@ -5,14 +5,11 @@ from rest_framework.authentication import TokenAuthentication
 from .models import *
 from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
-
-
-
+from  rest_framework.response import Response
 
 class RolesViewSet(viewsets.ModelViewSet):
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
-
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -166,4 +163,20 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    
+    
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer  
+    
+    
+
+        
+ 
+           
+
+
+    
+    
+        
     

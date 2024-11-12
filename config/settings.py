@@ -162,3 +162,6 @@ CORS_ALLOWED_ORIGINS = [
 # }
 
 APPEND_SLASH = False
+
+AUTH_USER_MODEL = 'crm_api.CustomUser'
+    

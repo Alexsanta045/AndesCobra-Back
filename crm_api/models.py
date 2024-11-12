@@ -10,15 +10,38 @@ class Roles(models.Model):
 
     class Meta:
         db_table = 'roles'  # Opcional: especifica el nombre de la tabla
+        
+        
+class Campañas(models.Model):
+    nombre = models.CharField(max_length=50)
+    descripcion = models.TextField(max_length=500)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateField(auto_now_add= True)
+    campos_opcionales = models.JSONField(default=dict, blank=True)
+    
+    def __str__(self):
+        return self.nombre
 
 class CustomUser(AbstractUser):
     role = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True)
+    estado = models.BooleanField(default=False)  
     
     class Meta:
         db_table = 'custom_user'  
+        
+  
 
     def __str__(self):
         return self.username
+      
+class CampañasUsuarios(models.Model):
+    usuarios_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    campañas_id = models.ForeignKey(Campañas, on_delete=models.CASCADE)
+    fecha_asignacion = models.DateField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"usuario: {self.usuarios_id} -  campaña: {self.campañas_id}"
+
 
 class Usuarios(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
@@ -42,23 +65,7 @@ class Chat(models.Model):
         return f"{self.usuario}: '{self.mensaje}'"
     
 
-class Campañas(models.Model):
-    nombre = models.CharField(max_length=50)
-    descripcion = models.TextField(max_length=500)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_actualizacion = models.DateField()
-    campos_opcionales = models.JSONField(default=dict, blank=True)
-    
-    def __str__(self):
-        return self.nombre
 
-class CampañasUsuarios(models.Model):
-    usuarios_id = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
-    campañas_id = models.ForeignKey(Campañas, on_delete=models.CASCADE)
-    fecha_asignacion = models.DateField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"usuario: {self.usuarios_id} -  campaña: {self.campañas_id}"
     
 class Tipo_identificacion(models.Model):
     nombre = models.CharField(max_length=20)
