@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 from .views import *
 from .serializers import *
@@ -41,7 +41,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('login/', auth_routes.login, name='login'),
     path('register/', auth_routes.register, name='register'),
-    path('profile/', auth_routes.profile, name='profile'),
     path('ejecutar_pagos/', EjecutarPagos.as_view(), name='ejecutar_pagos'),
     path('pagos_masivos/', PagosMasivos.as_view(), name='pagos_masivos'),
 ]
