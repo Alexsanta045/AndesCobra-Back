@@ -2,15 +2,13 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
+from  rest_framework.response import Response
 
 class RolesViewSet(viewsets.ModelViewSet):
     
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
     
-class UsuariosViewSet(viewsets.ModelViewSet):
-    queryset = Usuarios.objects.all()
-    serializer_class = UsuariosSerializer
     
 class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
@@ -97,5 +95,16 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
     
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer    
+    serializer_class = UserSerializer  
+    
+    
+
+        
+ 
+           
+
+
+    
+    
+        
     

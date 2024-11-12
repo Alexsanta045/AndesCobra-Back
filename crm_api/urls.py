@@ -11,7 +11,6 @@ from . import auth_routes
 router = DefaultRouter()
 
 router.register(r'roles', RolesViewSet, basename='Roles')
-router.register(r'usuarios', UsuariosViewSet, basename='Usuarios')
 router.register(r'campanas', CampañasViewSet, basename='Campañas')
 router.register(r'clientes', ClientesViewSet, basename='Clientes')
 router.register(r'telefono_cliente', Telefono_clienteViewSet, basename='Telefono cliente')
