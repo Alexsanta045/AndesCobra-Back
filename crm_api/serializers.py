@@ -34,12 +34,17 @@ class UserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"role": "Este rol no existe."})
         
         return user
+    
+    def validate_role(self, value):
+        if value and not Roles.objects.filter(nombre=value).exists():
+            raise serializers.ValidationError("Este rol no existe.")
+        return value
 
 
 class RolesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Roles
-        fields = '__all__'
+        fields = ['id', 'nombre']
 
 
 class UsuariosSerializer(serializers.ModelSerializer):

@@ -6,6 +6,8 @@ from django.db import transaction
 from rest_framework import status
 from .models import CustomUser
 from .serializers import UserSerializer
+from functools import wraps
+from django.http import HttpResponseForbidden
 
 # Login
 @api_view(['POST'])
@@ -50,3 +52,29 @@ def register(request):
 
 
 
+def role_required(roles):
+    def decorator(func):
+        @wraps(func)
+        def _wrapped_view(request, *args, **kwargs):
+            if not request.user.is_authenticated:
+                return Response({"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+            user_role = request.user.role.nombre if request.user.role else None
+            # Verifica si el rol del usuario es uno de los roles permitidos
+            if user_role not in roles:
+                return HttpResponseForbidden("You do not have permission to access this resource.")
+            
+            return func(request, *args, **kwargs)
+        return _wrapped_view
+    return decorator
+
+
+@api_view(['GET'])
+@role_required(['admin'])  # Solo los usuarios con rol 'admin' pueden acceder
+def admin_dashboard(request):
+    return Response({"message": "Bienvenido, Admin!"}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@role_required(['advisor', 'leader'])  # Solo los usuarios con rol 'advisor' o 'leader' pueden acceder
+def advisor_leader_dashboard(request):
+    return Response({"message": "Bienvenido, Advisor o Leader!"}, status=status.HTTP_200_OK)
