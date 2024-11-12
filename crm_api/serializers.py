@@ -68,14 +68,32 @@ class RolesSerializer(serializers.ModelSerializer):
         model = Roles
         fields = '__all__'
 
-# class CustomUserSerializer(serializers.ModelSerializer):
-#     role_id = "Administrador"
-#     username = "jeferson"
-#     class Meta:
-#         model = CustomUser
-#         fields = ['role__id' , 'username']
 
+class UsuariosSerializer(serializers.ModelSerializer):
+    nit = serializers.CharField()
+    nombres = serializers.CharField()
+    apellidos = serializers.CharField()
+    email = serializers.EmailField()
+    telefono = serializers.CharField()
+    rol = serializers.CharField(source='rol.nombre')
+    fecha_creacion = serializers.DateTimeField()
+    
+    class Meta:
+        model = Usuarios
+        fields = '__all__'
+        
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.fecha_creacion: 
+            representation['fecha_creacion'] = instance.fecha_creacion.strftime('%d-%m-%y %H:%M')
+        return representation
+        
+class CampañasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Campañas
+        fields = '__all__'
 
+        
 class CanalesSerializer(serializers.Serializer):
     telefonico = serializers.BooleanField()
     visita = serializers.BooleanField()
@@ -103,11 +121,17 @@ class ClientesSerializer(serializers.ModelSerializer):
 
 
 class CodeudoresSerializer(serializers.ModelSerializer):
+    nit = serializers.CharField()
+    nombre = serializers.CharField()
+    cliente = serializers.SerializerMethodField()
+    
     class Meta:
         model = Codeudores
         fields = '__all__'
-
-
+        
+    def get_cliente(self, obj):
+        return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
+        
 class ReferenciasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Referencias
@@ -116,23 +140,53 @@ class ReferenciasSerializer(serializers.ModelSerializer):
 
 class ObligacionesSerializer(serializers.ModelSerializer):
     codigo = serializers.CharField()
-    campaña = serializers.CharField(source='campaña.nombre')
-    cliente = serializers.SerializerMethodField()
-
+    campaña = serializers.CharField()
+    cliente = serializers.CharField()
     class Meta:
         model = Obligaciones
         fields = '__all__'
+        
+    # def get_cliente(self, obj):
+    #     return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
+    
+    def create(self, validated_data):
+        # Extrae los IDs de campaña y cliente directamente en lugar de datos anidados
+        campaña_id = validated_data.pop('campaña', None)
+        cliente_id = validated_data.pop('cliente', None)
+        
+        # Obtén la instancia de Clientes con el ID proporcionado o lanza un error si no se encuentra
+        try:
+            cliente = Clientes.objects.get(pk=cliente_id)
+            validated_data['cliente'] = cliente
+        except Clientes.DoesNotExist:
+            raise serializers.ValidationError("El cliente con el ID proporcionado no existe.")
+        
+        # Obtén la instancia de Campañas con el ID proporcionado o lanza un error si no se encuentra
+        try:
+            campaña = Campañas.objects.get(pk=campaña_id)
+            validated_data['campaña'] = campaña
+        except Campañas.DoesNotExist:
+            raise serializers.ValidationError("La campaña con el ID proporcionado no existe.")
 
-    def get_cliente(self, obj):
-        return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
+        # Crea la instancia de Obligaciones usando los datos validados
+        obligacion = Obligaciones.objects.create(**validated_data)
+        return obligacion
 
 
 class PagosSerializer(serializers.ModelSerializer):
+    valor = serializers.FloatField()
+    fecha = serializers.DateField()
+    obligacion = serializers.CharField(source='obligacion.codigo')
+    cliente = serializers.SerializerMethodField()
+    
     class Meta:
         model = Pagos
         fields = '__all__'
+        
+    def get_cliente(self, obj):
+        return f"{obj.obligacion.cliente.nombres} {obj.obligacion.cliente.apellidos}"
 
-
+        
 class ResultadosGestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResultadosGestion
@@ -166,8 +220,8 @@ class ChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ['fecha', '__all__']
-
+        fields = '__all__'
+        
     def get_usuario(self, obj):
         return f"{obj.usuario.nombres} {obj.usuario.apellidos}"
 
@@ -179,12 +233,16 @@ class ChatSerializer(serializers.ModelSerializer):
 
 
 class Tipo_identificacionSerializer(serializers.Serializer):
+    nombre = serializers.CharField()
+    
     class Meta:
         model = Tipo_identificacion
         fields = '__all__'
 
 
 class PaisSerializer(serializers.Serializer):
+    nombre = serializers.CharField()
+    
     class Meta:
         model = Pais
         fields = '__all__'
@@ -239,7 +297,7 @@ class Direccion_clienteSerializer(serializers.Serializer):
 
 
 class Direccion_codeudorSerializer(serializers.Serializer):
-    codeudor = serializers.CharField(source='codeudor.nombres')
+    codeudor = serializers.CharField(source='codeudor.nombre')
     ciudad = serializers.CharField(source='ciudad.nombre')
     barrio = serializers.CharField()
     vereda = serializers.CharField()
@@ -248,22 +306,27 @@ class Direccion_codeudorSerializer(serializers.Serializer):
     complemento = serializers.CharField()
 
     class Meta:
-        model = Direccion_cliente
+        model = Direccion_codeudor
         fields = '__all__'
 
 
 class Acuerdo_pagoSerializer(serializers.Serializer):
     valor_cuota = serializers.CharField()
     fecha_pago = serializers.CharField()
-    codigo_obligacion = serializers.CharField()
-
+    codigo_obligacion = serializers.CharField(source='codigo_obligacion.codigo')
+    cumplimiento = serializers.BooleanField()
+    usuario = serializers.SerializerMethodField()
+    descripcion = serializers.CharField()
+    
     class Meta:
         model = Acuerdo_pago
         fields = '__all__'
-
-
+        
+    def get_usuario(self, obj):
+        return f"{obj.usuario.nombres} {obj.usuario.apellidos}"
+        
 class Telefono_codeudorSerializer(serializers.Serializer):
-    codeudor = serializers.CharField(source='codeudor.nombres')
+    codeudor = serializers.CharField(source='codeudor.nombre')
     numero = serializers.CharField()
     tipo = serializers.CharField()
     tipo_celular = serializers.CharField()
@@ -274,7 +337,21 @@ class Telefono_codeudorSerializer(serializers.Serializer):
     departamento = serializers.CharField(source='departamento.nombre')
 
     class Meta:
-        model = Telefono_cliente
+        model = Telefono_codeudor
         fields = '__all__'
+    
 
+class GestionesFilterSerializer(serializers.ModelSerializer):
+    usuario = serializers.CharField(source='usuario.nombres')
+    cliente = serializers.CharField(source='cliente.nombres')
+    resultado = serializers.CharField(source='resultado.nombre', read_only=True)
+    fecha = serializers.DateTimeField()
+    comentarios = serializers.CharField(read_only=True)
+    
+    class Meta:
+        model = Gestiones
+        fields = ['usuario','cliente','resultado','fecha','comentarios',]
+        
 
+    
+    

@@ -55,7 +55,7 @@ class Usuarios(models.Model):
     
     def __str__(self):
         return f"{self.nit} - {self.nombres} {self.apellidos}"
-    
+                                
 class Chat(models.Model):
     usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
     mensaje = models.TextField(max_length=500)
@@ -103,7 +103,7 @@ class Canales(models.Model):
     sms = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"telefonico: {self.telefonico} email: {self.email} visita: {self.visita} whatsapp: {self.whatsapp} sms: {self.sms}"
+        return f"telefonico: {self.telefonico}, email: {self.email}, visita: {self.visita}, whatsapp: {self.whatsapp}, sms: {self.sms}"
 
 class Clientes(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
@@ -155,7 +155,7 @@ class Telefono_cliente(models.Model):
     tipo = models.CharField(max_length=30, blank=True)
     tipo_celular = models.CharField(max_length=30, blank=True)
     indicativo = models.CharField(max_length=5, blank=True)
-    extension = models.CharField(max_length=5)
+    extension = models.CharField(max_length=5, blank=True)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
 
@@ -165,12 +165,12 @@ class Telefono_cliente(models.Model):
 class Telefono_codeudor(models.Model):
     numero = models.CharField(max_length=10, primary_key=True)
     codeudor = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
-    tipo = models.CharField(max_length=30)
-    tipo_celular = models.CharField(max_length=30)
-    indicativo = models.CharField(max_length=5)
-    extension = models.CharField(max_length=5)
+    tipo = models.CharField(max_length=30, blank=True)
+    tipo_celular = models.CharField(max_length=30, blank=True)
+    indicativo = models.CharField(max_length=5, blank=True)
+    extension = models.CharField(max_length=5, blank=True)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    rating = models.IntegerField(default=0)
+    rating = models.IntegerField(default=0 )
 
     def __str__(self):
         return self.numero
@@ -206,6 +206,9 @@ class Acuerdo_pago(models.Model):
     valor_cuota = models.FloatField()
     fecha_pago = models.DateField()
     codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
+    cumplimiento = models.BooleanField(default=False)
+    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    descripcion = models.CharField(max_length=60, default='sin descripcion')
     
     def __str__(self):
         return f"obligacion: {self.codigo_obligacion} - valor: {self.valor_cuota} - fecha: {self.fecha_pago}"
@@ -214,11 +217,10 @@ class Pagos(models.Model):
     obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
     valor = models.IntegerField(default=0)
     fecha = models.DateField()
-    cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
-        return f"{self.cliente} - {self.valor} - {self.fecha}"
+        return f"{self.obligacion} - {self.valor} - {self.fecha}"
 
 class ResultadosGestion(models.Model):
     nombre = models.CharField(max_length=60)
