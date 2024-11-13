@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
-
+import random
 
 class Roles(models.Model):
     nombre = models.CharField(max_length=25)
@@ -217,6 +217,7 @@ class Pagos(models.Model):
     obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
     valor = models.IntegerField(default=0)
     fecha = models.DateField()
+    plan_pago_id = models.IntegerField(blank=True, null=True)
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
