@@ -1,21 +1,26 @@
-
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .models import *
 from .serializers import *
-
+from  rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from rest_framework import filters
+from .filters import *
 
 class RolesViewSet(viewsets.ModelViewSet):
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
-
+    
+    
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
 class UsuariosViewSet(viewsets.ModelViewSet):
     queryset = Usuarios.objects.all()
     serializer_class = UsuariosSerializer
+    
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -24,6 +29,9 @@ class UsuariosViewSet(viewsets.ModelViewSet):
 class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
     serializer_class = CampañasSerializer
+    
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_class = CampañasFilter
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -163,4 +171,20 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    
+    
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer  
+    
+    
+
+        
+ 
+           
+
+
+    
+    
+        
     
