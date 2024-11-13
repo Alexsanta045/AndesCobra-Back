@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     "crm_api",
-    'django_filters',
 ]
 
 MIDDLEWARE = [
