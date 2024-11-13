@@ -218,7 +218,7 @@ class Acuerdo_pago(models.Model):
     valor_cuota = models.FloatField()
     fecha_pago = models.DateField()
     codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
-    cumplimiento = models.BooleanField(default=False)
+    estado = models.CharField(default="Faltan Dias")
     usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
     descripcion = models.CharField(max_length=60, default='sin descripcion')
     

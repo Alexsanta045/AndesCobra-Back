@@ -13,7 +13,6 @@ class RolesViewSet(viewsets.ModelViewSet):
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
     
-    
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -188,11 +187,8 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer  
-    
-    
 
-        
- 
+
            
 
 
