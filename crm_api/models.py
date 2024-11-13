@@ -190,7 +190,8 @@ class ClientesReferencias(models.Model):
         return f"cliente: {self.cliente_id} - referencia: {self.referencia_id}"
 
 class Obligaciones(models.Model):
-    codigo = models.CharField(max_length=50, primary_key=True)
+    codigo = models.CharField(max_length=25, unique=True, editable=False, primary_key=True)
+    codigo_obligacion = models.IntegerField(null=True, blank=True)
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE) 
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     fecha_obligacion = models.DateField()
@@ -201,6 +202,17 @@ class Obligaciones(models.Model):
     
     def __str__(self):
         return f"{self.campaña} - {self.cliente}"
+    
+    def save(self, *args, **kwargs):
+        if not self.codigo:
+            self.codigo = self.generar_codigo_unico()
+        super().save(*args, **kwargs)
+
+    def generar_codigo_unico(self):
+        codigo = str(random.randint(1000, 9223372036854775807))
+        while Obligaciones.objects.filter(codigo=codigo).exists():
+            codigo = str(random.randint(1000, 9223372036854775807))
+        return codigo
     
 class Acuerdo_pago(models.Model):
     valor_cuota = models.FloatField()
