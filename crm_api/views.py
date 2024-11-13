@@ -91,8 +91,8 @@ class GestionesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = GestionesFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
     
 class CampañaUsuarioViewSet(viewsets.ModelViewSet):
@@ -180,8 +180,8 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = AcuerdoPagoFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
     
 class CustomUserViewSet(viewsets.ModelViewSet):

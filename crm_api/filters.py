@@ -21,13 +21,13 @@ class ResultadosGestionFilter(django_filters.FilterSet):
 
 
 class GestionesFilter(django_filters.FilterSet):
-    cliente = django_filters.CharFilter(lookup_expr='icontains')
-    resultado = django_filters.CharFilter(lookup_expr='icontains')
+    cliente_nombres = django_filters.CharFilter(field_name='cliente__nombres', lookup_expr='icontains')
+    resultado_nombre = django_filters.CharFilter(field_name='resultado__nombre', lookup_expr='icontains')
 
 
     class Meta:
-        model = ResultadosGestion
-        fields = ['cliente','resultado']
+        model = Gestiones
+        fields = ['cliente_nombres','resultado_nombre']
 
 
 class CodeudoresFilter(django_filters.FilterSet):
@@ -39,10 +39,10 @@ class CodeudoresFilter(django_filters.FilterSet):
 
 
 class AcuerdoPagoFilter(django_filters.FilterSet):
-    codigo_obligacion = django_filters.CharFilter(lookup_expr='icontains')
-    usuario = django_filters.CharFilter(lookup_expr='icontains')
+    codigo_obligacion = django_filters.CharFilter(field_name='codigo_obligacion__codigo', lookup_expr='icontains')
+    usuario_nombres = django_filters.CharFilter(field_name='usuario__nombres', lookup_expr='icontains')
 
 
     class Meta:
         model = Acuerdo_pago
-        fields = ['codigo_obligacion','usuario']
+        fields = ['codigo_obligacion','usuario_nombres']
