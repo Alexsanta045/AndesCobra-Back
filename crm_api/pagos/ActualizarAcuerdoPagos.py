@@ -7,10 +7,10 @@ from datetime import datetime, timedelta
 class ActualizarAcuerdosPagoView(APIView):
     def get(self, request, *args, **kwargs):
 
-        hoy = datetime.today().date()
-        fecha_vencida = hoy - timedelta(days=6)
+        ayer = datetime.today().date() - timedelta(days=1)
+        fecha_vencida = ayer - timedelta(days=6)
         
-        pagos = Pagos.objects.filter(fecha=hoy)
+        pagos = Pagos.objects.filter(fecha=ayer)
         acuerdos = Acuerdo_pago.objects.filter(fecha_pago=fecha_vencida)
 
         for pago in pagos:

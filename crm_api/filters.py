@@ -13,7 +13,6 @@ class CampañasFilter(django_filters.FilterSet):
         
 class ClientesFilter(django_filters.FilterSet):
     nombres = django_filters.CharFilter(lookup_expr='icontains')
-    nit = django_filters.CharFilter(lookup_expr='icontains')
     apellidos = django_filters.CharFilter(lookup_expr='icontains')
     email = django_filters.CharFilter(lookup_expr='icontains')
     
