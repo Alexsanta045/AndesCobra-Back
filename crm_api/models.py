@@ -29,11 +29,10 @@ class CustomUser(AbstractUser):
     class Meta:
         db_table = 'custom_user'  
         
-  
 
     def __str__(self):
         return self.username
-      
+    
 class CampañasUsuarios(models.Model):
     usuarios_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     campañas_id = models.ForeignKey(Campañas, on_delete=models.CASCADE)
