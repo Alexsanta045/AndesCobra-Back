@@ -56,7 +56,7 @@ class Usuarios(models.Model):
         return f"{self.nit} - {self.nombres} {self.apellidos}"
                                 
 class Chat(models.Model):
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     mensaje = models.TextField(max_length=500)
     fecha = models.DateTimeField(auto_now_add=True)
     
@@ -64,8 +64,6 @@ class Chat(models.Model):
         return f"{self.usuario}: '{self.mensaje}'"
     
 
-
-    
 class Tipo_identificacion(models.Model):
     nombre = models.CharField(max_length=20)
     
@@ -218,7 +216,7 @@ class Acuerdo_pago(models.Model):
     fecha_pago = models.DateField()
     codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
     estado = models.CharField(default="Vigente")
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     descripcion = models.CharField(max_length=60, default='sin descripcion')
     
     def __str__(self):
@@ -249,7 +247,7 @@ class Gestiones(models.Model):
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     resultado = models.ForeignKey(ResultadosGestion, on_delete=models.CASCADE)
     fecha = models.DateTimeField()
-    comentarios = models.TextField(max_length=200)
+    comentarios = models.TextField(max_length=200, null=True, blank=True)
     
     def __str__(self):
         return f"Usuario: {self.usuario}, Cliente: {self.cliente}, Resultado: {self.resultado}, Fecha: {self.fecha}"

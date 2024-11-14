@@ -190,7 +190,7 @@ class ResultadosGestionSerializer(serializers.ModelSerializer):
 
 
 class GestionesSerializer(serializers.ModelSerializer):
-    usuario = serializers.CharField(source='usuario.nombres')
+    usuario = serializers.CharField()
     cliente = serializers.CharField(source='cliente.nombres')
     resultado = serializers.CharField(source='resultado.nombre', read_only=True)
     fecha = serializers.DateTimeField()
@@ -209,7 +209,7 @@ class GestionesSerializer(serializers.ModelSerializer):
 
 
 class ChatSerializer(serializers.ModelSerializer):
-    usuario = serializers.CharField(source='usuario.nombres')
+    usuario = serializers.CharField()
     mensaje = serializers.CharField()
     fecha = serializers.DateTimeField()
 
@@ -337,7 +337,7 @@ class Telefono_codeudorSerializer(serializers.Serializer):
     
 
 class GestionesFilterSerializer(serializers.ModelSerializer):
-    usuario = serializers.CharField(source='usuario.nombres')
+    usuario = serializers.CharField()
     cliente = serializers.CharField(source='cliente.nombres')
     resultado = serializers.CharField(source='resultado.nombre', read_only=True)
     fecha = serializers.DateTimeField()
