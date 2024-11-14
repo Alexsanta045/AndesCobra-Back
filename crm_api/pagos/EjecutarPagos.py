@@ -39,7 +39,7 @@ class EjecutarPagos(APIView):
             obligacion = Obligaciones.objects.get(codigo=codigo_obligacion)
         except ObjectDoesNotExist:
             return Response(
-                {'error': 'La obligación con el código proporcionado no existe'},
+                {"error": f"La obligación con el código {codigo_obligacion} no existe"},
                 status=status.HTTP_404_NOT_FOUND,
             )
         
@@ -55,10 +55,6 @@ class EjecutarPagos(APIView):
         # Verificar si queda algún saldo para aplicar al capital
         if valor_pagado <= 0:
             obligacion.save()
-            return Response(
-                {'message': 'Pago aplicado a mora, saldo actual en capital: 0'},
-                status=status.HTTP_200_OK,
-            )
         
         # Aplicar el pago al valor_capital si hay saldo restante
         try:

@@ -145,7 +145,7 @@ class ObligacionesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Obligaciones
         fields = '__all__'
-        
+
     # def get_cliente(self, obj):
     #     return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
     
@@ -196,8 +196,7 @@ class ResultadosGestionSerializer(serializers.ModelSerializer):
 class GestionesSerializer(serializers.ModelSerializer):
     usuario = serializers.CharField(source='usuario.nombres')
     cliente = serializers.CharField(source='cliente.nombres')
-    resultado = serializers.CharField(
-        source='resultado.nombre', read_only=True)
+    resultado = serializers.CharField(source='resultado.nombre', read_only=True)
     fecha = serializers.DateTimeField()
     comentarios = serializers.CharField(read_only=True)
 

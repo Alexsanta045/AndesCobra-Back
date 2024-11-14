@@ -8,8 +8,6 @@ from .models import CustomUser
 from .serializers import UserSerializer
 
 # Login
-
-
 @api_view(['POST'])
 def login(request):
     print("Login endpoint reached")  # Añade esta línea
@@ -29,30 +27,28 @@ def login(request):
 
 
 # Registro
-
-
 @api_view(['POST'])
 def register(request):
     serializer = UserSerializer(data=request.data)
-
+    
     if serializer.is_valid():
         try:
             with transaction.atomic():
                 user = serializer.save()  # Aquí se crea el usuario
-                # Asegúrate de que el token se crea o se obtiene
-                token, created = Token.objects.get_or_create(user=user)
-
+                token, created = Token.objects.get_or_create(user=user)  # Asegúrate de que el token se crea o se obtiene
+                
                 return Response({
                     'token': token.key,
                     'user': UserSerializer(user).data
                 }, status=status.HTTP_201_CREATED)
-
+                
         except Exception as e:
             return Response({
                 'error': 'Error creating user',
                 'detail': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
-
+            
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # # Perfil
