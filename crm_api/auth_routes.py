@@ -47,8 +47,10 @@ def register(request):
                 'error': 'Error creating user',
                 'detail': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
-            
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 # # Perfil
