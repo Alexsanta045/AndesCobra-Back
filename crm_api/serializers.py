@@ -199,7 +199,7 @@ class GestionesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gestiones
-        fields = ['fecha', '__all__']
+        fields =  '__all__'
 
     # Formatear la fecha sin segundos ni milisegundos
     def to_representation(self, instance):
