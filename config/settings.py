@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django_filters',
     "corsheaders",
     "rest_framework",
-    "rest_framework.authtoken",
-    "crm_api"
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    "crm_api",
 ]
 
 MIDDLEWARE = [
@@ -150,3 +152,6 @@ CORS_ALLOWED_ORIGINS = [
 
 
 APPEND_SLASH = False
+
+AUTH_USER_MODEL = 'crm_api.CustomUser'
+    
