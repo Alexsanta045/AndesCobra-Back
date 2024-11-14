@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     'rest_framework.authtoken',
-    'rest_framework_simplejwt',
     "crm_api",
     'django_filters',
 ]
@@ -149,16 +148,6 @@ CORS_ALLOWED_ORIGINS = [
 #     'DEFAULT_PERMISSION_CLASSES': [
 #         'rest_framework.permissions.IsAuthenticated',
 #     ],
-# }
-# REST_FRAMEWORK = {
-    
-#      'DEFAULT_AUTHENTICATION_CLASSES': (
-        
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
-#     ),
-#     'DEFAULT_PERMISSION_CLASSES': (
-#         'rest_framework.permissions.IsAuthenticated',
-#     ),  
 # }
 
 APPEND_SLASH = False

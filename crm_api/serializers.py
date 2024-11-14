@@ -2,7 +2,6 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import *
 from django.db import transaction, IntegrityError
-import sys
 
 
 class CampañasSerializer(serializers.ModelSerializer):
@@ -16,14 +15,13 @@ class CampañasUsuariosSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class UserSerializer(serializers.ModelSerializer):
     # Cambiar a CharField si se recibe como nombre
     role_id = serializers.IntegerField(required= True)
     role_name = serializers.CharField(source= "role", required= False)
     estado = serializers.SerializerMethodField(required= False)
     campaña = serializers.SerializerMethodField(required= False)
-  
+
     def get_estado(self,obj):
         estado = obj.estado
         
