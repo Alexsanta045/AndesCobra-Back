@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from ..models import Pagos, Obligaciones
+from ..models import Pagos, Obligaciones, Clientes
 import pandas as pd
 from rest_framework import status
 from rest_framework.response import Response
@@ -27,15 +27,16 @@ class PagosMasivos(APIView):
     def llenarPagos(self, df):
         nuevos_pagos = []
         
+        # se recorren todos los datos del dataframe para registrar los pagos
         for index, row in df.iterrows():
+            valor_pagado = row['Valor Pagado']
+            fecha_pago = row['Fecha Pago']
+            valor = valor_pagado
+            
             try:
-                obligacion = Obligaciones.objects.get(codigo=row['Obligacion'])
-                valor_pagado = row['Valor Pagado']
-                fecha_pago = row['Fecha Pago']
-                
-                valor = valor_pagado
-                             
-                #se aplica el pago primero en la mora
+                obligacion = Obligaciones.objects.get(codigo=row['Codigo'])
+
+                 #se aplica el pago primero en la mora
                 if obligacion.valor_mora > 0:
                     if valor_pagado >= obligacion.valor_mora:
                         valor_pagado -= obligacion.valor_mora
@@ -46,11 +47,7 @@ class PagosMasivos(APIView):
                         
                 if valor_pagado <= 0:
                     obligacion.save()
-                    return Response(
-                        {'message': 'Pago aplicado a mora, saldo actual en capital: 0'},
-                        status=status.HTTP_200_OK,
-                    )
-                    
+
                 try:
                     obligacion.valor_capital -= valor_pagado
                     obligacion.save()
@@ -62,21 +59,56 @@ class PagosMasivos(APIView):
                     )
                     # inserta los pagos al arreglo
                     nuevos_pagos.append(pago)
-                except :
-                    Response(
-                    {
-                        'error': 'Error al efectuar el pago',
-                        'saldo_pendiente': obligacion.valor_capital,
-                        'saldo_mora': obligacion.valor_mora
+                except Exception as e:
+                    print(f"Error al guardar el pago: {e}")
+                
+            # si el codigo no coincide con ninguna obligacion se busca por numero de documento
+            except Obligaciones.DoesNotExist:
+                cliente = Clientes.objects.get(nit=row['Codigo'])
+                if cliente:
+                    while valor_pagado > 0:
+                        # se obtienen todas las obligaciones del cliente con valor_mora superior a $0
+                        obligaciones = Obligaciones.objects.filter(cliente_id=cliente).exclude(valor_mora=0)
+                        obligacion_menor = obligaciones[0].valor_mora
+                        # si el cliente tiene dos o mas obligaciones
+                        for obligacion in obligaciones:
+                            if obligacion.valor_mora <= obligacion_menor:
+                                obligacion_menor = obligacion.valor_mora
+                                
+                        obligacion = obligaciones.get(cliente_id=cliente, valor_mora=obligacion_menor)
+    
+                        #se aplica el pago primero en la mora
+                        if obligacion.valor_mora > 0:
+                            if valor_pagado >= obligacion.valor_mora:
+                                valor_pagado -= obligacion.valor_mora
+                                obligacion.valor_mora = 0
+                            else: 
+                                obligacion.valor_mora -= valor_pagado
+                                valor_pagado = 0
+                                
+                        if valor_pagado <= 0:
+                            obligacion.save()
+
+                        try:
+                            obligacion.valor_capital -= valor_pagado
+                            obligacion.save()
+                            
+                            pago = Pagos(
+                                obligacion=obligacion,
+                                valor=valor,
+                                fecha=fecha_pago,
+                            )
+                            # inserta los pagos al arreglo
+                            nuevos_pagos.append(pago)
+                        except :
+                            print(f"error al efectuar el pago a la obligacion: {obligacion} ")                        
                         
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                    )
-                        
-            except ObjectDoesNotExist:
-                print(f"Obligación no encontrada para el número: {row['Obligacion']}")
-        
+                else:
+                    obligacion = None
+                    
+            if not obligacion:
+                raise ObjectDoesNotExist
+      
         # insertar en bloque todos los pagos del archivo
         Pagos.objects.bulk_create(nuevos_pagos)
-        
         return Response(status=status.HTTP_201_CREATED)

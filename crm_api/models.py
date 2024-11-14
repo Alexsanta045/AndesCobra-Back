@@ -32,7 +32,7 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-      
+    
 class CampañasUsuarios(models.Model):
     usuarios_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     campañas_id = models.ForeignKey(Campañas, on_delete=models.CASCADE)
@@ -195,12 +195,12 @@ class Obligaciones(models.Model):
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     fecha_obligacion = models.DateField()
     fecha_vencimiento_cuota = models.DateField()
-    valor_capital = models.FloatField()
+    valor_capital = models.FloatField(null=True, blank=True)
     valor_mora = models.FloatField()
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
-        return f"{self.campaña} - {self.cliente}"
+        return f"{self.codigo} - {self.cliente}"
     
     def save(self, *args, **kwargs):
         if not self.codigo:

@@ -2,7 +2,6 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import *
 from django.db import transaction, IntegrityError
-import sys
 
 
 class CampañasSerializer(serializers.ModelSerializer):
@@ -20,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source= "role", required= False)
     estado = serializers.SerializerMethodField(required= False)
     campaña = serializers.SerializerMethodField(required= False)
-  
+
     def get_estado(self,obj):
         estado = obj.estado
         
@@ -63,7 +62,7 @@ class UserSerializer(serializers.ModelSerializer):
 class RolesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Roles
-        fields = '__all__'
+        fields = ['id', 'nombre']
 
 
 class UsuariosSerializer(serializers.ModelSerializer):
@@ -142,7 +141,7 @@ class ObligacionesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Obligaciones
         fields = '__all__'
-        
+
     # def get_cliente(self, obj):
     #     return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
     
@@ -193,14 +192,13 @@ class ResultadosGestionSerializer(serializers.ModelSerializer):
 class GestionesSerializer(serializers.ModelSerializer):
     usuario = serializers.CharField(source='usuario.nombres')
     cliente = serializers.CharField(source='cliente.nombres')
-    resultado = serializers.CharField(
-        source='resultado.nombre', read_only=True)
+    resultado = serializers.CharField(source='resultado.nombre', read_only=True)
     fecha = serializers.DateTimeField()
     comentarios = serializers.CharField(read_only=True)
 
     class Meta:
         model = Gestiones
-        fields = ['fecha', '__all__']
+        fields =  '__all__'
 
     # Formatear la fecha sin segundos ni milisegundos
     def to_representation(self, instance):

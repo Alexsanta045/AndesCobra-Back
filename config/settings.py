@@ -39,12 +39,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django_filters',
     "corsheaders",
     "rest_framework",
     'rest_framework.authtoken',
-    'rest_framework_simplejwt',
     "crm_api",
-    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -142,24 +141,24 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#     ],
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ],
-# }
-# REST_FRAMEWORK = {
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    # or allow read-only access for unauthenticated users.
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    #     # 'rest_framework.permissions.AllowAny',
+    # ]
     
 #      'DEFAULT_AUTHENTICATION_CLASSES': (
-        
 #         'rest_framework_simplejwt.authentication.JWTAuthentication',
 #     ),
-#     'DEFAULT_PERMISSION_CLASSES': (
-#         'rest_framework.permissions.IsAuthenticated',
-#     ),  
-# }
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
 
 APPEND_SLASH = False
 
