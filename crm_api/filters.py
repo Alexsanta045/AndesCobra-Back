@@ -9,7 +9,7 @@ class CampañasFilter(django_filters.FilterSet):
 
     class Meta:
         model = Campañas
-        fields = ['nombre']
+        fields = ['nombre', 'id']
         
 class ClientesFilter(django_filters.FilterSet):
     nombres = django_filters.CharFilter(lookup_expr='icontains')
