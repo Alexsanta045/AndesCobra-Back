@@ -29,7 +29,6 @@ class CustomUser(AbstractUser):
     class Meta:
         db_table = 'custom_user'  
         
-  
 
     def __str__(self):
         return self.username
@@ -240,12 +239,13 @@ class ResultadosGestion(models.Model):
     descripcion = models.TextField(max_length=200, blank=True)
     efectividad = models.BooleanField(default=False, blank=True)
     estado = models.BooleanField(default=False)
+    campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"{self.nombre} - estado: {self.estado}"
 
 class Gestiones(models.Model):
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     resultado = models.ForeignKey(ResultadosGestion, on_delete=models.CASCADE)
     fecha = models.DateTimeField()
