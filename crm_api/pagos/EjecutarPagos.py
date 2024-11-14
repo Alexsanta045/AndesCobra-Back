@@ -4,8 +4,11 @@ from ..models import Obligaciones, Pagos, Acuerdo_pago
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from datetime import datetime, timedelta
+from rest_framework.permissions import IsAuthenticated
 
 class EjecutarPagos(APIView):
+    
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):        
         # Validación de datos de entrada
