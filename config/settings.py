@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     'rest_framework.authtoken',
-    'rest_framework_simplejwt',
     "crm_api",
 ]
 
@@ -141,14 +140,19 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#     ],
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ],
-# }
+
+REST_FRAMEWORK = {
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [],
+    # or allow read-only access for unauthenticated users.
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    #     'rest_framework.permissions.AllowAny',
+    # ]
+    
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
 
 
 APPEND_SLASH = False

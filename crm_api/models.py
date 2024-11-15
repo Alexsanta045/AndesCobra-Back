@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
-
+import random
 
 class Roles(models.Model):
     nombre = models.CharField(max_length=25)
@@ -29,11 +29,10 @@ class CustomUser(AbstractUser):
     class Meta:
         db_table = 'custom_user'  
         
-  
 
     def __str__(self):
         return self.username
-      
+    
 class CampañasUsuarios(models.Model):
     usuarios_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     campañas_id = models.ForeignKey(Campañas, on_delete=models.CASCADE)
@@ -57,7 +56,7 @@ class Usuarios(models.Model):
         return f"{self.nit} - {self.nombres} {self.apellidos}"
                                 
 class Chat(models.Model):
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     mensaje = models.TextField(max_length=500)
     fecha = models.DateTimeField(auto_now_add=True)
     
@@ -65,8 +64,6 @@ class Chat(models.Model):
         return f"{self.usuario}: '{self.mensaje}'"
     
 
-
-    
 class Tipo_identificacion(models.Model):
     nombre = models.CharField(max_length=20)
     
@@ -190,24 +187,36 @@ class ClientesReferencias(models.Model):
         return f"cliente: {self.cliente_id} - referencia: {self.referencia_id}"
 
 class Obligaciones(models.Model):
-    codigo = models.CharField(max_length=50, primary_key=True)
+    codigo = models.CharField(max_length=25, unique=True, editable=False, primary_key=True)
+    codigo_obligacion = models.IntegerField(null=True, blank=True)
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE) 
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     fecha_obligacion = models.DateField()
     fecha_vencimiento_cuota = models.DateField()
-    valor_capital = models.FloatField()
+    valor_capital = models.FloatField(null=True, blank=True)
     valor_mora = models.FloatField()
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
-        return f"{self.campaña} - {self.cliente}"
+        return f"{self.codigo} - {self.cliente}"
+    
+    def save(self, *args, **kwargs):
+        if not self.codigo:
+            self.codigo = self.generar_codigo_unico()
+        super().save(*args, **kwargs)
+
+    def generar_codigo_unico(self):
+        codigo = str(random.randint(1000, 9223372036854775807))
+        while Obligaciones.objects.filter(codigo=codigo).exists():
+            codigo = str(random.randint(1000, 9223372036854775807))
+        return codigo
     
 class Acuerdo_pago(models.Model):
     valor_cuota = models.FloatField()
     fecha_pago = models.DateField()
     codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
-    cumplimiento = models.BooleanField(default=False)
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    estado = models.CharField(default="Vigente")
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     descripcion = models.CharField(max_length=60, default='sin descripcion')
     
     def __str__(self):
@@ -217,6 +226,7 @@ class Pagos(models.Model):
     obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
     valor = models.IntegerField(default=0)
     fecha = models.DateField()
+    plan_pago_id = models.IntegerField(blank=True, null=True)
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
@@ -227,16 +237,17 @@ class ResultadosGestion(models.Model):
     descripcion = models.TextField(max_length=200, blank=True)
     efectividad = models.BooleanField(default=False, blank=True)
     estado = models.BooleanField(default=False)
+    campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"{self.nombre} - estado: {self.estado}"
 
 class Gestiones(models.Model):
-    usuario = models.ForeignKey(Usuarios, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     resultado = models.ForeignKey(ResultadosGestion, on_delete=models.CASCADE)
     fecha = models.DateTimeField()
-    comentarios = models.TextField(max_length=200)
+    comentarios = models.TextField(max_length=200, null=True, blank=True)
     
     def __str__(self):
         return f"Usuario: {self.usuario}, Cliente: {self.cliente}, Resultado: {self.resultado}, Fecha: {self.fecha}"
