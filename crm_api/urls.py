@@ -6,9 +6,8 @@ from .views import *
 from .serializers import *
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
+from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from . import auth_routes
-
-
 
 router = DefaultRouter()
 
@@ -36,12 +35,12 @@ router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUs
 router.register(r'CustomUser', CustomUserViewSet, basename='custom-user') 
 
 
-
-
 urlpatterns = [
     path('', include(router.urls)),
-    path('login/', auth_routes.login, name='login'),
     path('register/', auth_routes.register, name='register'),
+    path('login/', auth_routes.login, name='login'),
+    path('logout/', auth_routes.logout, name='logout'), 
     path('ejecutar_pagos/', EjecutarPagos.as_view(), name='ejecutar_pagos'),
     path('pagos_masivos/', PagosMasivos.as_view(), name='pagos_masivos'),
+    path('actualizar_acuerdos_pagos/', ActualizarAcuerdosPagoView.as_view(), name='actualizar_acuerdos_pagos'),
 ]
