@@ -2,31 +2,33 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from ..models import *
+from ..serializers import * 
 
 class ObligacionesView(APIView):
     def get(self, request, *args, **kwargs):
-        usuario = request.query_params.get('usuario')
+        campaña = request.query_params.get('campaña')
 
-        if not usuario:
-            return Response({"error": "Usuario no proporcionado"}, status=status.HTTP_400_BAD_REQUEST)
-
-        cantidad_obligaciones = {}
-        cantidad_campañas = {}
-
-        campañas_usuarios = CampañasUsuarios.objects.filter(usuarios_id=usuario)
-
-        for campaña_usuario in campañas_usuarios:
-            campaña = campaña_usuario.campañas_id
-
-            cantidad_campañas[campaña.nombre] = cantidad_campañas.get(campaña.nombre, 0) + 1
-
+        try:
             obligaciones = Obligaciones.objects.filter(campaña=campaña)
-            cantidad_obligaciones[campaña.nombre] = obligaciones.count()
+            
+            serializer = ObligacionesSerializer(obligaciones, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Obligaciones.DoesNotExist:
+            return Response({"error": "No se encontraron obligaciones para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
+        
+class AcuerdosDePagoView(APIView):
+    def get(self, request, *args, **kwargs):
+        campaña = request.query_params.get('campaña')
 
-        response_data = {
-            "mensaje": "Datos de obligaciones y campañas obtenidos",
-            "cantidad_obligaciones": cantidad_obligaciones,
-            "cantidad_campañas": cantidad_campañas,
-        }
-
-        return Response(response_data, status=status.HTTP_200_OK)
+        try:
+            obligaciones = Obligaciones.objects.filter(campaña=campaña)
+            
+            serializer = ObligacionesSerializer(obligaciones, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Obligaciones.DoesNotExist:
+            return Response({"error": "No se encontraron obligaciones para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
+        
