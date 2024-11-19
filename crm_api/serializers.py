@@ -318,7 +318,7 @@ class Acuerdo_pagoSerializer(serializers.Serializer):
         fields = '__all__'
         
     def get_usuario(self, obj):
-        return f"{obj.usuario.nombres} {obj.usuario.apellidos}"
+        return f"{obj.usuario.username}"
         
 class Telefono_codeudorSerializer(serializers.Serializer):
     codeudor = serializers.CharField(source='codeudor.nombre')
