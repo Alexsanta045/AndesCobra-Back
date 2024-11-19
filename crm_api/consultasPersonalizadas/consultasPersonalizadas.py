@@ -42,11 +42,14 @@ class ClientesView(APIView):
         try:
             obligaciones = Obligaciones.objects.filter(campaña=campaña)
             clientes_data = []
+            clientes_nits = set() 
 
             for obligacion in obligaciones:
                 cliente = obligacion.cliente
-                serializer = ClientesSerializer(cliente) 
-                clientes_data.append(serializer.data)
+                if cliente.nit not in clientes_nits:
+                    clientes_nits.add(cliente.nit)
+                    serializer = ClientesSerializer(cliente)
+                    clientes_data.append(serializer.data)
 
             return Response(clientes_data, status=status.HTTP_200_OK)
         
@@ -96,6 +99,8 @@ class GestionesView(APIView):
             
             gestiones = Gestiones.objects.filter(usuario__in=usuarios)
             
+            print(f"Se encontraron {gestiones.count()} gestiones.")
+            
             gestiones_serializer = GestionesSerializer(gestiones, many=True)
             
             return Response({
@@ -104,4 +109,3 @@ class GestionesView(APIView):
         
         except CampañasUsuarios.DoesNotExist:
             return Response({"error": "No se encontraron gestiones para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
-        
