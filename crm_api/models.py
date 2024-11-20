@@ -28,7 +28,6 @@ class CustomUser(AbstractUser):
     
     class Meta:
         db_table = 'custom_user'  
-        
 
     def __str__(self):
         return self.username

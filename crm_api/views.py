@@ -9,8 +9,8 @@ from  rest_framework.response import Response
 class RolesViewSet(viewsets.ModelViewSet):
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
 class UsuariosViewSet(viewsets.ModelViewSet):
     queryset = Usuarios.objects.all()
@@ -24,8 +24,8 @@ class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
     serializer_class = CampañasSerializer
 
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     
 class ClientesViewSet(viewsets.ModelViewSet):
     queryset = Clientes.objects.all()
@@ -33,7 +33,7 @@ class ClientesViewSet(viewsets.ModelViewSet):
 
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
- 
+
 class CodeudoresViewSet(viewsets.ModelViewSet):
     queryset = Codeudores.objects.all()
     serializer_class = CodeudoresSerializer
