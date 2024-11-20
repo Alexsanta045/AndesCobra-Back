@@ -43,10 +43,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     'rest_framework.authtoken',
-<<<<<<< HEAD
-    # 'rest_framework_simplejwt',
-=======
->>>>>>> b56c4758681e2028059da86f3a619e659f69150f
     "crm_api",
 ]
 
