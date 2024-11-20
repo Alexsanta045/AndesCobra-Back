@@ -30,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'role_id', 'role_name' , 'estado', 'campaña']
+        fields = ['id', 'username', 'email', 'password', 'role_id', 'role_name' , 'estado', 'campaña','is_active']
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': True}
@@ -318,7 +318,7 @@ class Acuerdo_pagoSerializer(serializers.Serializer):
         fields = '__all__'
         
     def get_usuario(self, obj):
-        return f"{obj.usuario.nombres} {obj.usuario.apellidos}"
+        return f"{obj.usuario.username}"
         
 class Telefono_codeudorSerializer(serializers.Serializer):
     codeudor = serializers.CharField(source='codeudor.nombre')

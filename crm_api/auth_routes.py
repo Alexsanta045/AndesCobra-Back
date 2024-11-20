@@ -31,7 +31,10 @@ def login(request):
         return Response({"error": "Contraseña Incorrecta"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Genera o recupera el token de autenticación
-    token, _ = Token.objects.get_or_create(user=user)
+    if user.is_active:
+        token, _ = Token.objects.get_or_create(user=user)
+    else:
+            return Response({"error": "Usuario desactivado"}, status=status.HTTP_401_UNAUTHORIZED)
 
     # Serializa el usuario
     serializer = UserSerializer(instance=user)
