@@ -12,6 +12,7 @@ class Roles(models.Model):
         db_table = 'roles'  # Opcional: especifica el nombre de la tabla
         
 class Campañas(models.Model):
+    id = models.IntegerField(unique=True, editable=False, primary_key=True)
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField(max_length=500)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -21,6 +22,17 @@ class Campañas(models.Model):
     
     def __str__(self):
         return self.nombre
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.id = self.generar_codigo_unico()
+        super().save(*args, **kwargs)
+    
+    def generar_codigo_unico(self):
+        codigo = str(random.randint(1000, 999999))
+        while Campañas.objects.filter(id=codigo).exists():
+            codigo = str(random.randint(1000, 999999))
+        return codigo
 
 class CustomUser(AbstractUser):
     role = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True)
