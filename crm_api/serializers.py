@@ -10,6 +10,8 @@ class CampañasSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre']
         
 class CampañasUsuariosSerializer(serializers.ModelSerializer):
+    usuario = serializers.CharField(source='usuarios_id')
+    campañas_id = CampañasSerializer()
     
     class Meta:
         model = CampañasUsuarios
@@ -51,13 +53,12 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
     
-    def get_campaña(self,obj):
+    def get_campaña(self, obj):
         id = obj.id
-        campaña = CampañasUsuarios.objects.filter(usuarios_id=id).first()
-        if campaña:
-            return campaña.campañas_id.nombre
-        else:
-            return None
+        campañas = CampañasUsuarios.objects.filter(usuarios_id=id).select_related('campañas_id')  # Optimiza las consultas
+        if campañas.exists():
+            return [{"id": c.campañas_id.id, "nombre": c.campañas_id.nombre} for c in campañas]
+        return []
 
 
 class RolesSerializer(serializers.ModelSerializer):
