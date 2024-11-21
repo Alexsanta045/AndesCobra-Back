@@ -10,6 +10,9 @@ class CampañasSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre']
         
 class CampañasUsuariosSerializer(serializers.ModelSerializer):
+    usuario = serializers.CharField(source='usuarios_id')
+    campañas_id = CampañasSerializer()
+    
     class Meta:
         model = CampañasUsuarios
         fields = '__all__'
@@ -30,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'role_id', 'role_name' , 'estado', 'campaña']
+        fields = ['id', 'username', 'email', 'password', 'role_id', 'role_name' , 'estado', 'campaña','is_active']
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': True}
@@ -50,13 +53,12 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
     
-    def get_campaña(self,obj):
+    def get_campaña(self, obj):
         id = obj.id
-        campaña = CampañasUsuarios.objects.filter(usuarios_id=id).first()
-        if campaña:
-            return campaña.campañas_id.nombre
-        else:
-            return None
+        campañas = CampañasUsuarios.objects.filter(usuarios_id=id).select_related('campañas_id')  # Optimiza las consultas
+        if campañas.exists():
+            return [{"id": c.campañas_id.id, "nombre": c.campañas_id.nombre} for c in campañas]
+        return []
 
 
 class RolesSerializer(serializers.ModelSerializer):
@@ -318,7 +320,7 @@ class Acuerdo_pagoSerializer(serializers.Serializer):
         fields = '__all__'
         
     def get_usuario(self, obj):
-        return f"{obj.usuario.nombres} {obj.usuario.apellidos}"
+        return f"{obj.usuario.username}"
         
 class Telefono_codeudorSerializer(serializers.Serializer):
     codeudor = serializers.CharField(source='codeudor.nombre')
