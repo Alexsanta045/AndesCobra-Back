@@ -7,15 +7,42 @@ from ..serializers import *
 class ObligacionesView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
+        nit_cliente = request.query_params.get('cliente')
+
+        # Si ambos parámetros son nulos, devolvemos un error.
+        if not campaña and not nit_cliente:
+            return Response(
+                {"error": "Debe proporcionar al menos un parámetro: 'campaña' o 'cliente'."}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
-            obligaciones = Obligaciones.objects.filter(campaña=campaña)
-            
+            # Filtrar por campaña y cliente solo si ambos parámetros existen.
+            if campaña and nit_cliente:
+                # Filtrar por ambos parámetros: campaña y cliente (NIT)
+                obligaciones = Obligaciones.objects.filter(campaña__id=campaña, clieitnte__n=nit_cliente)
+            elif campaña:
+                # Solo filtrar por campaña
+                obligaciones = Obligaciones.objects.filter(campaña__id=campaña)
+            elif nit_cliente:
+                # Solo filtrar por cliente
+                obligaciones = Obligaciones.objects.filter(cliente__nit=nit_cliente)
+
+            # Si no se encuentran resultados, retornamos un 404.
+            if not obligaciones.exists():
+                return Response(
+                    {"error": "No se encontraron obligaciones con los parámetros proporcionados."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Serializar los datos y devolverlos.
             serializer = ObligacionesSerializer(obligaciones, many=True)
-            
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        except Obligaciones.DoesNotExist:
-            return Response({"error": "No se encontraron obligaciones para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            # Si ocurre un error inesperado, devolvemos un error genérico.
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         
 class AcuerdosDePagoView(APIView):
     def get(self, request, *args, **kwargs):

@@ -15,15 +15,6 @@ class RolesViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-class UsuariosViewSet(viewsets.ModelViewSet):
-    queryset = Usuarios.objects.all()
-    serializer_class = UsuariosSerializer
-    
-
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-
 class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
     serializer_class = CampañasSerializer
@@ -79,8 +70,8 @@ class ObligacionesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ObligacionesFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
 class PagosViewSet(viewsets.ModelViewSet):
     queryset = Pagos.objects.all()

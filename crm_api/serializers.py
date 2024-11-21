@@ -67,24 +67,6 @@ class RolesSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre']
 
 
-class UsuariosSerializer(serializers.ModelSerializer):
-    nit = serializers.CharField()
-    nombres = serializers.CharField()
-    apellidos = serializers.CharField()
-    email = serializers.EmailField()
-    telefono = serializers.CharField()
-    rol = serializers.CharField(source='rol.nombre')
-    fecha_creacion = serializers.DateTimeField()
-    
-    class Meta:
-        model = Usuarios
-        fields = '__all__'
-        
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        if instance.fecha_creacion: 
-            representation['fecha_creacion'] = instance.fecha_creacion.strftime('%d-%m-%y %H:%M')
-        return representation
         
 class CampañasSerializer(serializers.ModelSerializer):
     class Meta:
