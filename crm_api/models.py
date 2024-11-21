@@ -11,20 +11,32 @@ class Roles(models.Model):
     class Meta:
         db_table = 'roles'  # Opcional: especifica el nombre de la tabla
         
-        
 class Campañas(models.Model):
+    id = models.IntegerField(unique=True, editable=False, primary_key=True)
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField(max_length=500)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateField(auto_now_add= True)
+    img = models.URLField(blank=True, null=True, max_length=500)
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
         return self.nombre
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.id = self.generar_codigo_unico()
+        super().save(*args, **kwargs)
+    
+    def generar_codigo_unico(self):
+        codigo = str(random.randint(1000, 999999))
+        while Campañas.objects.filter(id=codigo).exists():
+            codigo = str(random.randint(1000, 999999))
+        return codigo
 
 class CustomUser(AbstractUser):
     role = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True)
-    estado = models.BooleanField(default=False)  
+    estado = models.BooleanField(default=False)
     
     class Meta:
         db_table = 'custom_user'  
@@ -189,7 +201,7 @@ class ClientesReferencias(models.Model):
 class Obligaciones(models.Model):
     codigo = models.CharField(max_length=25, unique=True, editable=False, primary_key=True)
     codigo_obligacion = models.IntegerField(null=True, blank=True)
-    campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE) 
+    campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     fecha_obligacion = models.DateField()
     fecha_vencimiento_cuota = models.DateField()
