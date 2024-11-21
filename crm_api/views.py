@@ -31,9 +31,17 @@ class CampañasViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = CampañasFilter
 
+class CampañaUsuarioViewSet(viewsets.ModelViewSet):
+    queryset = CampañasUsuarios.objects.all()
+    serializer_class = CampañasUsuariosSerializer
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]    
+
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    
+
+
 class ClientesViewSet(viewsets.ModelViewSet):
     queryset = Clientes.objects.all()
     serializer_class = ClientesSerializer
@@ -106,12 +114,6 @@ class GestionesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     
     
-class CampañaUsuarioViewSet(viewsets.ModelViewSet):
-    queryset = CampañasUsuarios.objects.all()
-    serializer_class = CampañasUsuariosSerializer
-
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]    
 
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
@@ -196,5 +198,5 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
     
     
 class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.all().order_by('-estado')  # Primero los activos
     serializer_class = UserSerializer   

@@ -10,6 +10,7 @@ class CampañasSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre']
         
 class CampañasUsuariosSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = CampañasUsuarios
         fields = '__all__'
