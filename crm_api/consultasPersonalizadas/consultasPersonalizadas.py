@@ -20,7 +20,7 @@ class ObligacionesView(APIView):
             # Filtrar por campaña y cliente solo si ambos parámetros existen.
             if campaña and nit_cliente:
                 # Filtrar por ambos parámetros: campaña y cliente (NIT)
-                obligaciones = Obligaciones.objects.filter(campaña__id=campaña, clieitnte__n=nit_cliente)
+                obligaciones = Obligaciones.objects.filter(campaña__id=campaña, cliente__nit=nit_cliente)
             elif campaña:
                 # Solo filtrar por campaña
                 obligaciones = Obligaciones.objects.filter(campaña__id=campaña)
