@@ -12,6 +12,7 @@ class Roles(models.Model):
         db_table = 'roles'  # Opcional: especifica el nombre de la tabla
         
 class Campañas(models.Model):
+    id = models.IntegerField(unique=True, editable=False, primary_key=True)
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField(max_length=500)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -21,6 +22,17 @@ class Campañas(models.Model):
     
     def __str__(self):
         return self.nombre
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.id = self.generar_codigo_unico()
+        super().save(*args, **kwargs)
+    
+    def generar_codigo_unico(self):
+        codigo = str(random.randint(1000, 999999))
+        while Campañas.objects.filter(id=codigo).exists():
+            codigo = str(random.randint(1000, 999999))
+        return codigo
 
 class CustomUser(AbstractUser):
     role = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True)
@@ -28,7 +40,6 @@ class CustomUser(AbstractUser):
     
     class Meta:
         db_table = 'custom_user'  
-        
 
     def __str__(self):
         return self.username
@@ -41,27 +52,14 @@ class CampañasUsuarios(models.Model):
     def __str__(self):
         return f"usuario: {self.usuarios_id} -  campaña: {self.campañas_id}"
 
-
-class Usuarios(models.Model):
-    nit = models.CharField(max_length=15, primary_key=True)
-    nombres = models.CharField(max_length=40)
-    apellidos = models.CharField(max_length=30)
-    email = models.EmailField(max_length=50)
-    telefono = models.CharField(max_length=10)
-    rol = models.ForeignKey(Roles, on_delete=models.CASCADE)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
-    estado = models.BooleanField(default=True)
-    
-    def __str__(self):
-        return f"{self.nit} - {self.nombres} {self.apellidos}"
                                 
 class Chat(models.Model):
-    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    CustomUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     mensaje = models.TextField(max_length=500)
     fecha = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.usuario}: '{self.mensaje}'"
+        return f"{self.CustomUser}: '{self.mensaje}'"
     
 
 class Tipo_identificacion(models.Model):

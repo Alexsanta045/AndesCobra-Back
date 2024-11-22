@@ -1,15 +1,20 @@
-from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.db import IntegrityError, transaction
+from rest_framework import serializers
+
 from .models import *
-from django.db import transaction, IntegrityError
 
 
 class CampañasSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Campañas
         fields = ['id', 'nombre']
         
 class CampañasUsuariosSerializer(serializers.ModelSerializer):
+    usuarios_id = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())  # Relación de clave foránea
+    campañas_id = serializers.PrimaryKeyRelatedField(queryset=Campañas.objects.all())  # Relación de clave foránea
+    
     class Meta:
         model = CampañasUsuarios
         fields = '__all__'
@@ -27,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
             return 'Activo'
         else:
             return 'Inactivo'
-        
+                
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'password', 'role_id', 'role_name' , 'estado', 'campaña','is_active']
@@ -50,13 +55,12 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
     
-    def get_campaña(self,obj):
+    def get_campaña(self, obj):
         id = obj.id
-        campaña = CampañasUsuarios.objects.filter(usuarios_id=id).first()
-        if campaña:
-            return campaña.campañas_id.nombre
-        else:
-            return None
+        campañas = CampañasUsuarios.objects.filter(usuarios_id=id).select_related('campañas_id')  # Optimiza las consultas
+        if campañas.exists():
+            return [{"id": c.campañas_id.id, "nombre": c.campañas_id.nombre} for c in campañas]
+        return []
 
 
 class RolesSerializer(serializers.ModelSerializer):
@@ -65,24 +69,6 @@ class RolesSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre']
 
 
-class UsuariosSerializer(serializers.ModelSerializer):
-    nit = serializers.CharField()
-    nombres = serializers.CharField()
-    apellidos = serializers.CharField()
-    email = serializers.EmailField()
-    telefono = serializers.CharField()
-    rol = serializers.CharField(source='rol.nombre')
-    fecha_creacion = serializers.DateTimeField()
-    
-    class Meta:
-        model = Usuarios
-        fields = '__all__'
-        
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        if instance.fecha_creacion: 
-            representation['fecha_creacion'] = instance.fecha_creacion.strftime('%d-%m-%y %H:%M')
-        return representation
         
 class CampañasSerializer(serializers.ModelSerializer):
     class Meta:
