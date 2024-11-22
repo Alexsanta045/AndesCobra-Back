@@ -1,8 +1,10 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from ..models import *
-from ..serializers import * 
+from ..serializers import *
+
 
 class ObligacionesView(APIView):
     def get(self, request, *args, **kwargs):
@@ -59,7 +61,10 @@ class ClientesView(APIView):
 
 class UsuariosView(APIView):
     def get(self, request, *args, **kwargs):
-        campaña_id = request.query_params.get('campaña')
+        campaña_id = request.query_params.get('campana')
+        
+        
+        
         try:
             relaciones = CampañasUsuarios.objects.filter(campañas_id=campaña_id)
             usuarios = [relacion.usuarios_id for relacion in relaciones]
@@ -70,6 +75,9 @@ class UsuariosView(APIView):
         
         except CampañasUsuarios.DoesNotExist:
             return Response({"error": "No se encontraron usuarios para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        
         
 class PagosView(APIView):
     def get(self, request, *args, **kwargs):
@@ -109,3 +117,8 @@ class GestionesView(APIView):
         
         except CampañasUsuarios.DoesNotExist:
             return Response({"error": "No se encontraron gestiones para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        
+        
+
