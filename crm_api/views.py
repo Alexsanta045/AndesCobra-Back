@@ -3,22 +3,31 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .models import *
 from crm_api.serializers.serializers import *
-from  rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import OrderingFilter
+from rest_framework.permissions import IsAuthenticated
 from .filters import *
+from .models import *
+from .models import CampañasUsuarios
+from .serializers import *
+
 
 class RolesViewSet(viewsets.ModelViewSet):
     queryset = Roles.objects.all()
     serializer_class = RolesSerializer
-    
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
 
 class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
     serializer_class = CampañasSerializer
-    
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = CampañasFilter
 
@@ -29,19 +38,20 @@ class CampañaUsuarioViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]    
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
 
 class ClientesViewSet(viewsets.ModelViewSet):
     queryset = Clientes.objects.all()
     serializer_class = ClientesSerializer
-    
+
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ClientesFilter
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
 
 class CodeudoresViewSet(viewsets.ModelViewSet):
     queryset = Codeudores.objects.all()
@@ -52,16 +62,21 @@ class CodeudoresViewSet(viewsets.ModelViewSet):
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    
+
+
 class ReferenciasViewSet(viewsets.ModelViewSet):
     queryset = Referencias.objects.all()
     serializer_class = ReferenciasSerializer
 
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
-    filterset_class = ReferenciasFilter
-    
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_class = ReferenciasFilter
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
 
 class ObligacionesViewSet(viewsets.ModelViewSet):
     queryset = Obligaciones.objects.all()
@@ -70,8 +85,9 @@ class ObligacionesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ObligacionesFilter
 
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
 
 class PagosViewSet(viewsets.ModelViewSet):
     queryset = Pagos.objects.all()
@@ -83,6 +99,7 @@ class PagosViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+
 class ResultadosGestionViewSet(viewsets.ModelViewSet):
     queryset = ResultadosGestion.objects.all()
     serializer_class = ResultadosGestionSerializer
@@ -90,7 +107,7 @@ class ResultadosGestionViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ResultadosGestionFilter
 
-    authentication_classes = [TokenAuthentication] 
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
 
@@ -104,7 +121,7 @@ class GestionesViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     
-    
+
 
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()

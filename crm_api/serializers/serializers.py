@@ -1,17 +1,17 @@
-from rest_framework import serializers
-from django.contrib.auth.models import User
 from ..models import *
-from django.db import transaction, IntegrityError
+from rest_framework import serializers
+
 
 
 class CampañasSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Campañas
         fields = ['id', 'nombre']
         
 class CampañasUsuariosSerializer(serializers.ModelSerializer):
-    usuario = serializers.CharField(source='usuarios_id')
-    campañas_id = CampañasSerializer()
+    usuarios_id = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())  # Relación de clave foránea
+    campañas_id = serializers.PrimaryKeyRelatedField(queryset=Campañas.objects.all())  # Relación de clave foránea
     
     class Meta:
         model = CampañasUsuarios
@@ -30,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             return 'Activo'
         else:
             return 'Inactivo'
-        
+                
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'password', 'role_id', 'role_name' , 'estado', 'campaña','is_active']
