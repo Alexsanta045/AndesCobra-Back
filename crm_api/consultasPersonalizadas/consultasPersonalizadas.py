@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from ..models import *
 from crm_api.serializers.serializers import *
 from crm_api.serializers.clientDataSerializer import ClientDataSerializer
-# from ..serializers import *
+from ..serializers import *
 from ..serializers.clienteGestionSerializer import ClienteObligacionesSerializer
 
 
@@ -170,8 +170,9 @@ class ClientDataView(APIView):
         return Response(serializer.data)
 
 
-class ClientesGestiones(APIView):
+# class ClientesGestiones(APIView):
     
-    def get(self, request):
-        serializer = ClienteObligacionesSerializer()
-        return Response(serializer.data)
+#     def get(self, request):
+#         obligaciones = Ob
+#         serializer = ClienteObligacionesSerializer()
+#         return Response(serializer.data)
