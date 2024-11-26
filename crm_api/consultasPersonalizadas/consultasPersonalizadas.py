@@ -1,9 +1,11 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from ..models import *
-from ..serializers import *
+from crm_api.serializers.serializers import *
+from crm_api.serializers.clientDataSerializer import ClientDataSerializer
+# from ..serializers import *
+from ..serializers.clienteGestionSerializer import ClienteObligacionesSerializer
 
 
 class ObligacionesView(APIView):
@@ -159,8 +161,17 @@ class GestionesView(APIView):
         
         except CampañasUsuarios.DoesNotExist:
             return Response({"error": "No se encontraron gestiones para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
-        
-        
-        
-        
 
+
+class ClientDataView(APIView):
+    def get(self, request):
+        obligaciones = Obligaciones.objects.select_related("cliente", "campaña").all()
+        serializer = ClientDataSerializer(obligaciones, many=True)
+        return Response(serializer.data)
+
+
+class ClientesGestiones(APIView):
+    
+    def get(self, request):
+        serializer = ClienteObligacionesSerializer()
+        return Response(serializer.data)
