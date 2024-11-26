@@ -33,6 +33,7 @@ router.register(r'canales', CanalesViewSet, basename='Canales')
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
 router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUsuario') 
 router.register(r'CustomUser', CustomUserViewSet, basename='custom-user') 
+router.register(r'ClienteObligaciones', ClienteObligacionesViewSet, basename='cliente-obligaciones')
 
 
 
