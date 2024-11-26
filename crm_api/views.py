@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from .filters import *
 from .models import *
 from .models import CampañasUsuarios
-from .serializers import *
+from crm_api.serializers.serializers import *
 
 
 class RolesViewSet(viewsets.ModelViewSet):
@@ -25,8 +25,8 @@ class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
     serializer_class = CampañasSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = CampañasFilter
@@ -85,8 +85,8 @@ class ObligacionesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ObligacionesFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
 
 class PagosViewSet(viewsets.ModelViewSet):
