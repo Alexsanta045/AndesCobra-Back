@@ -33,7 +33,6 @@ router.register(r'canales', CanalesViewSet, basename='Canales')
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
 router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUsuario') 
 router.register(r'CustomUser', CustomUserViewSet, basename='custom-user') 
-router.register(r'ClienteObligaciones', ClienteObligacionesViewSet, basename='cliente-obligaciones')
 
 
 
@@ -52,5 +51,6 @@ urlpatterns = [
     path('pagos_masivos/', PagosMasivos.as_view(), name='pagos_masivos'),
     path('actualizar_acuerdos_pagos/', ActualizarAcuerdosPagoView.as_view(), name='actualizar_acuerdos_pagos'),
     path('client-data/', ClientDataView.as_view(), name='client-data'),
+    path('cliente_obligaciones/', ClientesObligaciones.as_view(), name='cliente_obligaciones'),
 
 ]

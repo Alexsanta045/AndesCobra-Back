@@ -12,7 +12,7 @@ from .filters import *
 from .models import *
 from .models import CampañasUsuarios
 from .serializers import *
-from .serializers.clienteGestionSerializer import ClienteObligacionesSerializer
+from .serializers.clienteObligacionesSerializer import ClienteObligacionesSerializer
 
 
 class RolesViewSet(viewsets.ModelViewSet):
@@ -46,9 +46,6 @@ class ClientesViewSet(viewsets.ModelViewSet):
 
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ClientesFilter
-
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -208,7 +205,7 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
     
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all().order_by('-estado')  # Primero los activos
-    serializer_class = UserSerializer   
+    serializer_class = UserSerializer
 
 class ClienteObligacionesViewSet(viewsets.ModelViewSet):
     queryset = Clientes.objects.all()

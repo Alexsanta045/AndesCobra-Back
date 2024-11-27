@@ -5,7 +5,7 @@ from ..models import *
 from crm_api.serializers.serializers import *
 from crm_api.serializers.clientDataSerializer import ClientDataSerializer
 from ..serializers import *
-from ..serializers.clienteGestionSerializer import ClienteObligacionesSerializer
+from ..serializers.clienteObligacionesSerializer import ClienteObligacionesSerializer
 
 
 class ObligacionesView(APIView):
@@ -170,9 +170,15 @@ class ClientDataView(APIView):
         return Response(serializer.data)
 
 
-# class ClientesGestiones(APIView):
-    
-#     def get(self, request):
-#         obligaciones = Ob
-#         serializer = ClienteObligacionesSerializer()
-#         return Response(serializer.data)
+class ClientesObligaciones(APIView):
+    def get(self, request):
+        cliente = request.query_params.get('cliente')
+        
+        if not cliente:
+            return Response(
+                {"error": "el parámetro cliente es obligatorio."},
+                status=status.HTTP_400_BAD_REQUEST)
+        
+        cliente_data = Clientes.objects.filter(nit=cliente)
+        serializer = ClienteObligacionesSerializer(cliente_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
