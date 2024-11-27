@@ -105,8 +105,8 @@ class ResultadosGestionViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ResultadosGestionFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
 
 class GestionesViewSet(viewsets.ModelViewSet):
