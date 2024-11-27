@@ -12,6 +12,7 @@ from .filters import *
 from .models import *
 from .models import CampañasUsuarios
 from .serializers import *
+from .serializers.clienteGestionSerializer import ClienteObligacionesSerializer
 
 
 class RolesViewSet(viewsets.ModelViewSet):
@@ -209,3 +210,6 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all().order_by('-estado')  # Primero los activos
     serializer_class = UserSerializer   
 
+class ClienteObligacionesViewSet(viewsets.ModelViewSet):
+    queryset = Clientes.objects.all()
+    serializer_class = ClienteObligacionesSerializer

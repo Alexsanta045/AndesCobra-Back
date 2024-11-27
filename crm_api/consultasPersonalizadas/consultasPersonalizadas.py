@@ -5,6 +5,7 @@ from ..models import *
 from crm_api.serializers.serializers import *
 from crm_api.serializers.clientDataSerializer import ClientDataSerializer
 from ..serializers import *
+from ..serializers.clienteGestionSerializer import ClienteObligacionesSerializer
 
 
 class ObligacionesView(APIView):
@@ -32,7 +33,7 @@ class ObligacionesView(APIView):
             # Filtrar por campaña y cliente solo si ambos parámetros existen.
             if campaña and nit_cliente:
                 # Filtrar por ambos parámetros: campaña y cliente (NIT)
-                obligaciones = Obligaciones.objects.filter(campaña_id=campaña, cliente_nit=nit_cliente)
+                obligaciones = Obligaciones.objects.filter(campaña__id=campaña, cliente__nit=nit_cliente)
             elif campaña and celular:
                 celular_cliente = Telefono_cliente.objects.get(numero=celular)
                 cliente = Clientes.objects.get(nit=celular_cliente.cliente.nit)
@@ -66,17 +67,33 @@ class ObligacionesView(APIView):
 class AcuerdosDePagoView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
-
-        try:
-            obligaciones = Obligaciones.objects.filter(campaña=campaña)
-            
-            for obligacion in obligaciones:
-                acuerdos = Acuerdo_pago.objects.filter(codigo_obligacion=obligacion)
-                
-                serializer = Acuerdo_pagoSerializer(acuerdos, many=True)
-            
-            return Response(serializer.data, status=status.HTTP_200_OK)
         
+        try:
+            estado = request.query_params.get('estado')
+        except Exception as e:
+            return print(f"no se proporcionó estado")
+        
+        try:
+            if campaña and estado:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña)
+                
+                for obligacion in obligaciones:
+                    acuerdos = Acuerdo_pago.objects.filter(codigo_obligacion=obligacion, estado=estado)
+                    
+                    serializer = Acuerdo_pagoSerializer(acuerdos, many=True)
+                
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            elif campaña:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña)
+                
+                for obligacion in obligaciones:
+                    acuerdos = Acuerdo_pago.objects.filter(codigo_obligacion=obligacion)
+                    
+                    serializer = Acuerdo_pagoSerializer(acuerdos, many=True)
+                
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
         except Obligaciones.DoesNotExist:
             return Response({"error": "No se encontraron acuerdos de pago para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
         
@@ -105,9 +122,7 @@ class ClientesView(APIView):
 
 class UsuariosView(APIView):
     def get(self, request, *args, **kwargs):
-        campaña_id = request.query_params.get('campana')
-        
-        
+        campaña_id = request.query_params.get('campana')    
         
         try:
             relaciones = CampañasUsuarios.objects.filter(campañas_id=campaña_id)
@@ -168,3 +183,11 @@ class ClientDataView(APIView):
         obligaciones = Obligaciones.objects.select_related("cliente", "campaña").all()
         serializer = ClientDataSerializer(obligaciones, many=True)
         return Response(serializer.data)
+
+
+# class ClientesGestiones(APIView):
+    
+#     def get(self, request):
+#         obligaciones = Ob
+#         serializer = ClienteObligacionesSerializer()
+#         return Response(serializer.data)
