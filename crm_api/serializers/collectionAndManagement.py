@@ -23,7 +23,7 @@ class CollectionAndManagement(serializers.Serializer):
             recaudos[pago.fecha] += pago.valor  # Sumar el valor de los pagos por fecha
 
         # Convertir los datos agrupados en una lista para mostrarlo
-        recaudos_por_fecha = [{"fecha": str(fecha), "recaudo": recaudo} for fecha, recaudo in recaudos.iteñms()]
+        recaudos_por_fecha = [{"fecha": str(fecha), "recaudo": recaudo} for fecha, recaudo in recaudos.items()]
         return recaudos_por_fecha
 
     def get_fecha(self, obj):

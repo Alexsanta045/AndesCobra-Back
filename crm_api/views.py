@@ -46,11 +46,8 @@ class ClientesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ClientesFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
 
 class CodeudoresViewSet(viewsets.ModelViewSet):
