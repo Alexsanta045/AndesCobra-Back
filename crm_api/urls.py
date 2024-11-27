@@ -53,5 +53,5 @@ urlpatterns = [
     path('client-data/', ClientDataView.as_view(), name='client-data'),
     path('cliente_obligaciones/', ClientesObligaciones.as_view(), name='cliente_obligaciones'),
     path('colletion-management/', CollectionAndManagementView.as_view(), name='colletion-management'),
-    path('campanas/interacciones/', InteraccionesPorFechaAPIView.as_view(), name='get_interacciones_por_fecha'),
+    path('campanas/interacciones/', InteraccionCampañasView.as_view(), name='get_interacciones_por_fecha'),
 ]

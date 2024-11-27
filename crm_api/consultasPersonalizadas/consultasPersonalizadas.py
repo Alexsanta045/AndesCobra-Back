@@ -8,7 +8,7 @@ from crm_api.serializers.clientDataSerializer import ClientDataSerializer
 from ..serializers import *
 from ..serializers.clienteObligacionesSerializer import ClienteObligacionesSerializer
 from crm_api.serializers.collectionAndManagement import CollectionAndManagement
-from crm_api.serializers.interacciónStatsSerializer import CampañaStatsSerializer
+from crm_api.serializers.interaccionSerializer import InteraccionSerializer
 from datetime import datetime
 
 
@@ -125,9 +125,8 @@ class UsuariosView(APIView):
         except CampañasUsuarios.DoesNotExist:
             return Response({"error": "No se encontraron usuarios para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
         
-        
-        
-        
+
+
 class PagosView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
@@ -193,49 +192,36 @@ class CollectionAndManagementView(APIView):
         serializer = CollectionAndManagement(campañas, many=True)
         return Response(serializer.data)
 
-class InteraccionesPorFechaAPIView(APIView):
+class InteraccionCampañasView(APIView):
     def get(self, request, *args, **kwargs):
-        fecha_param = request.query_params.get('fecha', None)
+        # Obtener todas las campañas
+        campañas = Campañas.objects.all()
         
-        # Filtro por fecha si se proporciona
-        if fecha_param:
-            try:
-                fecha = datetime.strptime(fecha_param, '%Y-%m-%d').date()
-                gestiones = Gestiones.objects.filter(fecha__date=fecha)
-            except ValueError:
-                return Response({'error': 'Fecha inválida, debe ser en formato YYYY-MM-DD'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            gestiones = Gestiones.objects.all()
+        # Calcular los totales de SMS, WhatsApp y llamadas
+        total_sms = 0
+        total_whatsapp = 0
+        total_llamadas = 0
 
-        result = []
-        totales = {
-            'total_sms': 0,
-            'total_wpp': 0,
-            'total_llamadas': 0
+        # Recorremos todas las campañas para calcular los totales
+        for campaña in campañas:
+            total_sms += Gestiones.objects.filter(resultado__campaña=campaña, tipo_gestion__nombre="SMS").count()
+            total_whatsapp += Gestiones.objects.filter(resultado__campaña=campaña, tipo_gestion__nombre="WhatsApp").count()
+            total_llamadas += Gestiones.objects.filter(resultado__campaña=campaña, tipo_gestion__nombre="Llamada").count()
+
+        # Usar el serializer para las campañas
+        serializer = InteraccionSerializer(campañas, many=True)
+
+        # Crear los totales
+        total_data = {
+            "total_sms": total_sms,
+            "total_whatsapp": total_whatsapp,
+            "total_llamadas": total_llamadas
         }
 
-        for campaña in Campañas.objects.all():
-            gestiones_campaña = gestiones.filter(resultado__campaña=campaña)
-            
-            # Contar interacciones por canal
-            sms_count = gestiones_campaña.filter(cliente__canales_autorizados__sms=True).count()
-            whatsapp_count = gestiones_campaña.filter(cliente__canales_autorizados__whatsapp=True).count()
-            llamadas_count = gestiones_campaña.filter(cliente__canales_autorizados__telefonico=True).count()
-            
-            # Actualizar totales
-            totales['total_sms'] += sms_count
-            totales['total_wpp'] += whatsapp_count
-            totales['total_llamadas'] += llamadas_count
-            
-            result.append({
-                'campaña': campaña.nombre,
-                'sms': sms_count,
-                'wpp': whatsapp_count,
-                'llamadas': llamadas_count,
-            })
+        # Devolver las campañas junto con los totales
+        response_data = {
+            "campañas": serializer.data,
+            "total": total_data
+        }
 
-        # Devolver tanto las interacciones por campaña como los totales
-        return Response({
-            'interacciones_por_campaña': result,
-            'totales': totales
-        }, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)

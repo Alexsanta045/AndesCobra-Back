@@ -238,7 +238,12 @@ class ResultadosGestion(models.Model):
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
     
     def __str__(self):
-        return f"{self.nombre} - estado: {self.estado}"
+        return f"{self.nombre} - campaña: {self.campaña}"
+
+class Tipo_gestion(models.Model):
+    nombre = models.CharField(max_length=60)
+    def __str__(self):
+        return self.nombre
 
 class Gestiones(models.Model):
     usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -246,6 +251,9 @@ class Gestiones(models.Model):
     resultado = models.ForeignKey(ResultadosGestion, on_delete=models.CASCADE)
     fecha = models.DateTimeField()
     comentarios = models.TextField(max_length=200, null=True, blank=True)
+    tipo_gestion = models.ForeignKey(Tipo_gestion, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"Usuario: {self.usuario}, Cliente: {self.cliente}, Resultado: {self.resultado}, Fecha: {self.fecha}"
+    
+

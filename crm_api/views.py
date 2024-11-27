@@ -156,7 +156,6 @@ class CiudadViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     
-    
 class Telefono_clienteViewSet(viewsets.ModelViewSet):
     queryset = Telefono_cliente.objects.all()
     serializer_class = Telefono_clienteSerializer
