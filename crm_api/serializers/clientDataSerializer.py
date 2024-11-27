@@ -50,7 +50,8 @@ class ClientDataSerializer(serializers.Serializer):
 
     def get_montoGestAnt(self, obj):
         """
-        Obtiene el monto gestionado (total de los pagos) de la gestión anterior asociada a un cliente específico.
+        Obtiene el monto gestionado (total de los pagos) de la gestión anterior asociada a un cliente específico,
+        de manera similar a cómo se calcula el total de recaudo de una campaña.
         """
         # Buscar la última gestión asociada al cliente, ordenada por fecha en orden descendente
         ultima_gestion = Gestiones.objects.filter(cliente=obj.cliente).order_by('-fecha').first()
@@ -60,10 +61,10 @@ class ClientDataSerializer(serializers.Serializer):
             obligacion = Obligaciones.objects.filter(cliente=ultima_gestion.cliente).order_by('-fecha_obligacion').first()
 
             if obligacion:
-                # Obtener todos los pagos realizados para esta obligación
+                # Filtrar los pagos relacionados con esta obligación
                 pagos = Pagos.objects.filter(obligacion=obligacion)
 
-                # Sumar todos los valores de los pagos realizados
+                # Calcular el monto gestionado sumando los valores de todos los pagos realizados
                 monto_gestionado = sum(pago.valor for pago in pagos)
 
                 return monto_gestionado
