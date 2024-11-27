@@ -12,7 +12,7 @@ from . import auth_routes
 router = DefaultRouter()
 
 router.register(r'roles', RolesViewSet, basename='Roles')
-router.register(r'campanas', CampañasViewSet, basename='Campañas')
+router.register(r'campanas-api', CampañasViewSet, basename='Campañas')
 router.register(r'clientes', ClientesViewSet, basename='Clientes')
 router.register(r'telefono_cliente', Telefono_clienteViewSet, basename='Telefono cliente')
 router.register(r'direccion_cliente', Direccion_clienteViewSet, basename='Dirección cliente')
@@ -52,5 +52,6 @@ urlpatterns = [
     path('actualizar_acuerdos_pagos/', ActualizarAcuerdosPagoView.as_view(), name='actualizar_acuerdos_pagos'),
     path('client-data/', ClientDataView.as_view(), name='client-data'),
     path('cliente_obligaciones/', ClientesObligaciones.as_view(), name='cliente_obligaciones'),
-
+    path('colletion-management/', CollectionAndManagementView.as_view(), name='colletion-management'),
+    path('campanas/interacciones/', InteraccionesPorFechaAPIView.as_view(), name='get_interacciones_por_fecha'),
 ]
