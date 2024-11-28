@@ -1,8 +1,6 @@
-from django.contrib.auth.models import User
-from django.db import IntegrityError, transaction
 from rest_framework import serializers
-
-from .models import *
+from ..models import *
+from rest_framework import serializers
 
 
 class CampañasSerializer(serializers.ModelSerializer):
@@ -99,7 +97,7 @@ class ClientesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clientes
         fields = ['nit', 'tipo_id', 'nombres', 'apellidos',
-                  'email', 'canales_autorizados', 'campos_opcionales']
+                'email', 'canales_autorizados', 'campos_opcionales']
 
 
 class CodeudoresSerializer(serializers.ModelSerializer):

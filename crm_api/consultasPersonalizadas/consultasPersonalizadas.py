@@ -1,20 +1,31 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from ..models import *
+from crm_api.serializers.serializers import *
+from crm_api.serializers.clientDataSerializer import ClientDataSerializer
 from ..serializers import *
+from ..serializers.clienteGestionSerializer import ClienteObligacionesSerializer
 
 
 class ObligacionesView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
-        nit_cliente = request.query_params.get('cliente')
-
+    
+        try:
+            nit_cliente = request.query_params.get('cliente')
+        except Exception as e:
+            return print(f"no se proporcionó nit")
+        
+        try:
+            celular = request.query_params.get('celular')
+        except Exception as e:
+            return print(f"no se proporcionó celular")
+         
         # Si ambos parámetros son nulos, devolvemos un error.
-        if not campaña and not nit_cliente:
+        if not campaña and not nit_cliente and not celular:
             return Response(
-                {"error": "Debe proporcionar al menos un parámetro: 'campaña' o 'cliente'."}, 
+                {"error": "Debe proporcionar al menos un parámetro: 'campaña' o 'cliente' o 'celular."}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -23,12 +34,20 @@ class ObligacionesView(APIView):
             if campaña and nit_cliente:
                 # Filtrar por ambos parámetros: campaña y cliente (NIT)
                 obligaciones = Obligaciones.objects.filter(campaña__id=campaña, cliente__nit=nit_cliente)
+            elif campaña and celular:
+                celular_cliente = Telefono_cliente.objects.get(numero=celular)
+                cliente = Clientes.objects.get(nit=celular_cliente.cliente.nit)
+                obligaciones = Obligaciones.objects.filter(campaña__id=campaña, cliente=cliente)
             elif campaña:
                 # Solo filtrar por campaña
                 obligaciones = Obligaciones.objects.filter(campaña__id=campaña)
             elif nit_cliente:
                 # Solo filtrar por cliente
                 obligaciones = Obligaciones.objects.filter(cliente__nit=nit_cliente)
+            elif celular:
+                celular_cliente = Telefono_cliente.objects.get(numero=celular)
+                cliente = Clientes.objects.get(nit=celular_cliente.cliente.nit)
+                obligaciones = Obligaciones.objects.filter(cliente=cliente)
 
             # Si no se encuentran resultados, retornamos un 404.
             if not obligaciones.exists():
@@ -179,8 +198,18 @@ class GestionesView(APIView):
         
         except CampañasUsuarios.DoesNotExist:
             return Response({"error": "No se encontraron gestiones para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
-        
-        
-        
-        
 
+
+class ClientDataView(APIView):
+    def get(self, request):
+        obligaciones = Obligaciones.objects.select_related("cliente", "campaña").all()
+        serializer = ClientDataSerializer(obligaciones, many=True)
+        return Response(serializer.data)
+
+
+# class ClientesGestiones(APIView):
+    
+#     def get(self, request):
+#         obligaciones = Ob
+#         serializer = ClienteObligacionesSerializer()
+#         return Response(serializer.data)
