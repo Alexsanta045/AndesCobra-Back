@@ -33,8 +33,8 @@ class CampañaUsuarioViewSet(viewsets.ModelViewSet):
     queryset = CampañasUsuarios.objects.all()
     serializer_class = CampañasUsuariosSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]    
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]    
 
 
 class ClientesViewSet(viewsets.ModelViewSet):
@@ -44,8 +44,7 @@ class ClientesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ClientesFilter
 
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

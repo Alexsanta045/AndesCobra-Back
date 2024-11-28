@@ -86,26 +86,61 @@ class ClientesView(APIView):
             return Response({"error": "No se encontraron clientes para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
 
 
+
+
 class UsuariosView(APIView):
     def get(self, request, *args, **kwargs):
         campaña_id = request.query_params.get('campana')
-        
-        
-        
+        role_id = request.query_params.get('role')
+
+        # Verificar si al menos uno de los parámetros está presente.
+        if not campaña_id and not role_id:
+            return Response(
+                {"error": "Debe proporcionar al menos un parámetro: 'campaña' o 'role'."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
-            relaciones = CampañasUsuarios.objects.filter(campañas_id=campaña_id)
+            # Usar select_related para optimizar la consulta y asegurar acceso al rol
+            relaciones = CampañasUsuarios.objects.select_related('usuarios_id__role')
+
+            # Aplicar filtros condicionales
+            if campaña_id and role_id:
+                # Filtrar por ambos parámetros: campaña y rol
+                relaciones = relaciones.filter(
+                    campañas_id=campaña_id, 
+                    usuarios_id__role__id=role_id
+                )
+            elif campaña_id:
+                # Solo filtrar por campaña
+                relaciones = relaciones.filter(campañas_id=campaña_id)
+            elif role_id:
+                # Solo filtrar por rol
+                relaciones = relaciones.filter(usuarios_id__role__id=role_id)
+
+            # Eliminar duplicados para evitar usuarios repetidos
+            relaciones = relaciones.distinct('usuarios_id')
+
+            # Si no se encuentran relaciones, devolver 404.
+            if not relaciones.exists():
+                return Response(
+                    {"error": "No se encontraron usuarios con los parámetros proporcionados."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Obtener los usuarios relacionados
             usuarios = [relacion.usuarios_id for relacion in relaciones]
-            
+
+            # Serializar los datos y devolverlos.
             serializer = UserSerializer(usuarios, many=True)
-            
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # Si ocurre un error inesperado, devolver un error genérico.
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        except CampañasUsuarios.DoesNotExist:
-            return Response({"error": "No se encontraron usuarios para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
-        
-        
-        
-        
+
+           
 class PagosView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
