@@ -1,13 +1,14 @@
 
-from django.urls import path, include, re_path
-from rest_framework.routers import DefaultRouter
-from .views import *
 from crm_api.serializers.serializers import *
+from django.urls import include, path, re_path
+from rest_framework.routers import DefaultRouter
+
+from . import auth_routes
+from .consultasPersonalizadas.consultasPersonalizadas import *
+from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
-from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
-from .consultasPersonalizadas.consultasPersonalizadas import *
-from . import auth_routes
+from .views import *
 
 router = DefaultRouter()
 
@@ -52,5 +53,7 @@ urlpatterns = [
     path('pagos_masivos/', PagosMasivos.as_view(), name='pagos_masivos'),
     path('actualizar_acuerdos_pagos/', ActualizarAcuerdosPagoView.as_view(), name='actualizar_acuerdos_pagos'),
     path('client-data/', ClientDataView.as_view(), name='client-data'),
+    path('campanas-por-usuario/', CampañasPorUsuario.as_view(), name='campanas-por-usuario'),  
+    path('borrarCampañas/', CampañaUsuarioDeleteView.as_view(), name='borrarCampañas'),  
 
 ]

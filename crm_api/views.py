@@ -1,13 +1,10 @@
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
-from .models import *
 from crm_api.serializers.serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
+
 from .filters import *
 from .models import *
 from .models import CampañasUsuarios
@@ -26,8 +23,8 @@ class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
     serializer_class = CampañasSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = CampañasFilter
@@ -35,10 +32,9 @@ class CampañasViewSet(viewsets.ModelViewSet):
 class CampañaUsuarioViewSet(viewsets.ModelViewSet):
     queryset = CampañasUsuarios.objects.all()
     serializer_class = CampañasUsuariosSerializer
-
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]    
-
+    
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_class = CampañaUsuarioFilter
 
 class ClientesViewSet(viewsets.ModelViewSet):
     queryset = Clientes.objects.all()
@@ -47,8 +43,8 @@ class ClientesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ClientesFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
  
 
@@ -60,22 +56,20 @@ class CodeudoresViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = CodeudoresFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
 
 class ReferenciasViewSet(viewsets.ModelViewSet):
     queryset = Referencias.objects.all()
     serializer_class = ReferenciasSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ReferenciasFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
 
 class ObligacionesViewSet(viewsets.ModelViewSet):
@@ -85,8 +79,8 @@ class ObligacionesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ObligacionesFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
 
 class PagosViewSet(viewsets.ModelViewSet):
@@ -96,8 +90,8 @@ class PagosViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = PagosFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
 
 class ResultadosGestionViewSet(viewsets.ModelViewSet):
@@ -107,8 +101,8 @@ class ResultadosGestionViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ResultadosGestionFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
 
 class GestionesViewSet(viewsets.ModelViewSet):
@@ -118,8 +112,8 @@ class GestionesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = GestionesFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 
 
@@ -127,72 +121,72 @@ class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 class Tipo_identificacionViewSet(viewsets.ModelViewSet):
     queryset = Tipo_identificacion.objects.all()
     serializer_class = Tipo_identificacionSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 class PaisViewSet(viewsets.ModelViewSet):
     queryset = Pais.objects.all()
     serializer_class = PaisSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 class DepartamentoViewSet(viewsets.ModelViewSet):
     queryset = Departamento.objects.all()
     serializer_class = DepartamentoSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 class CiudadViewSet(viewsets.ModelViewSet):
     queryset = Ciudad.objects.all()
     serializer_class = CiudadSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
     
 class Telefono_clienteViewSet(viewsets.ModelViewSet):
     queryset = Telefono_cliente.objects.all()
     serializer_class = Telefono_clienteSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 class Telefono_codeudorViewSet(viewsets.ModelViewSet):
     queryset = Telefono_codeudor.objects.all()
     serializer_class = Telefono_codeudorSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 class Direccion_clienteViewSet(viewsets.ModelViewSet):
     queryset = Direccion_cliente.objects.all()
     serializer_class = Direccion_clienteSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 class Direccion_codeudorViewSet(viewsets.ModelViewSet):
     queryset = Direccion_codeudor.objects.all()
     serializer_class = Direccion_codeudorSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 class CanalesViewSet(viewsets.ModelViewSet):
     queryset = Canales.objects.all()
     serializer_class = CanalesSerializer
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
 class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
     queryset = Acuerdo_pago.objects.all()
@@ -201,8 +195,8 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = AcuerdoPagoFilter
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     
     
 class CustomUserViewSet(viewsets.ModelViewSet):
