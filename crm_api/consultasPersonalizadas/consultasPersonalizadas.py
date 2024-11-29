@@ -1,14 +1,24 @@
+from crm_api.serializers.clientDataSerializer import ClientDataSerializer
+from crm_api.serializers.serializers import *
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ..models import *
-from crm_api.serializers.serializers import *
-from crm_api.serializers.clientDataSerializer import ClientDataSerializer
 from ..serializers import *
-from ..serializers.clienteGestionSerializer import ClienteObligacionesSerializer
+from ..serializers.clienteObligacionesSerializer import ClienteObligacionesSerializer
+from crm_api.serializers.collectionAndManagement import CollectionAndManagement
+from crm_api.serializers.interaccionSerializer import InteraccionSerializer
+from datetime import datetime
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+
 
 
 class ObligacionesView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
     
@@ -105,24 +115,60 @@ class ClientesView(APIView):
             return Response({"error": "No se encontraron clientes para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
 
 
+
+
 class UsuariosView(APIView):
     def get(self, request, *args, **kwargs):
-        campaña_id = request.query_params.get('campana')    
-        
+        campaña_id = request.query_params.get('campana')
+        role_id = request.query_params.get('role')
+
+        # Verificar si al menos uno de los parámetros está presente.
+        if not campaña_id and not role_id:
+            return Response(
+                {"error": "Debe proporcionar al menos un parámetro: 'campaña' o 'role'."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
-            relaciones = CampañasUsuarios.objects.filter(campañas_id=campaña_id)
+            # Usar select_related para optimizar la consulta y asegurar acceso al rol
+            relaciones = CampañasUsuarios.objects.select_related('usuarios_id__role')
+
+            # Aplicar filtros condicionales
+            if campaña_id and role_id:
+                # Filtrar por ambos parámetros: campaña y rol
+                relaciones = relaciones.filter(
+                    campañas_id=campaña_id, 
+                    usuarios_id__role__id=role_id
+                )
+            elif campaña_id:
+                # Solo filtrar por campaña
+                relaciones = relaciones.filter(campañas_id=campaña_id)
+            elif role_id:
+                # Solo filtrar por rol
+                relaciones = relaciones.filter(usuarios_id__role__id=role_id)
+
+            # Eliminar duplicados para evitar usuarios repetidos
+            relaciones = relaciones.distinct('usuarios_id')
+
+            # Si no se encuentran relaciones, devolver 404.
+            if not relaciones.exists():
+                return Response(
+                    {"error": "No se encontraron usuarios con los parámetros proporcionados."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Obtener los usuarios relacionados
             usuarios = [relacion.usuarios_id for relacion in relaciones]
-            
+
+            # Serializar los datos y devolverlos.
             serializer = UserSerializer(usuarios, many=True)
-            
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # Si ocurre un error inesperado, devolver un error genérico.
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        except CampañasUsuarios.DoesNotExist:
-            return Response({"error": "No se encontraron usuarios para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
-        
-        
-        
-        
+            
 class PagosView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
@@ -170,9 +216,121 @@ class ClientDataView(APIView):
         return Response(serializer.data)
 
 
-# class ClientesGestiones(APIView):
+class ClientesObligaciones(APIView):
+    def get(self, request):
+        cliente = request.query_params.get('cliente')
+        
+        if not cliente:
+            return Response(
+                {"error": "el parámetro cliente es obligatorio."},
+                status=status.HTTP_400_BAD_REQUEST)
+        
+        cliente_data = Clientes.objects.filter(nit=cliente)
+        serializer = ClienteObligacionesSerializer(cliente_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+class CollectionAndManagementView(APIView):
+    def get(self, request, *args, **kwargs):
+        campañas = Campañas.objects.all()
+        serializer = CollectionAndManagement(campañas, many=True)
+        return Response(serializer.data)
+
+class InteraccionCampañasView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Obtener todas las campañas
+        campañas = Campañas.objects.all()
+        
+        # Calcular los totales de SMS, WhatsApp y llamadas
+        total_sms = 0
+        total_whatsapp = 0
+        total_llamadas = 0
+
+        # Recorremos todas las campañas para calcular los totales
+        for campaña in campañas:
+            total_sms += Gestiones.objects.filter(resultado__campaña=campaña, tipo_gestion__nombre="SMS").count()
+            total_whatsapp += Gestiones.objects.filter(resultado__campaña=campaña, tipo_gestion__nombre="WhatsApp").count()
+            total_llamadas += Gestiones.objects.filter(resultado__campaña=campaña, tipo_gestion__nombre="Llamada").count()
+
+        # Usar el serializer para las campañas
+        serializer = InteraccionSerializer(campañas, many=True)
+
+        # Crear los totales
+        total_data = {
+            "total_sms": total_sms,
+            "total_whatsapp": total_whatsapp,
+            "total_llamadas": total_llamadas
+        }
+
+        # Devolver las campañas junto con los totales
+        response_data = {
+            "campañas": serializer.data,
+            "total": total_data
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
     
-#     def get(self, request):
-#         obligaciones = Ob
-#         serializer = ClienteObligacionesSerializer()
-#         return Response(serializer.data)
+    
+class ResultadosGestionView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        try:
+            campaña = request.query_params.get('campaña')
+            
+            resultado_gestion = ResultadosGestion.objects.filter(campaña=campaña, estado=True)
+            
+            serializer = ResultadosGestionSerializer(resultado_gestion, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class CampañasPorUsuario(APIView):
+    def get(self, request, *args, **kwargs):
+        # Obtener el id del usuario desde los parámetros de la consulta
+        usuario_id = request.query_params.get('usuario_id')
+
+        # Verificar si se proporcionó el id del usuario
+        if not usuario_id:
+            return Response(
+                {"error": "Debe proporcionar el parámetro 'usuario_id'."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Filtrar las campañas asociadas al usuario especificado
+            relaciones = CampañasUsuarios.objects.filter(usuarios_id=usuario_id)
+
+            # Si no se encuentran campañas, devolver un 404
+            if not relaciones.exists():
+                return Response(
+                    {"error": "No se encontraron campañas asociadas a este usuario."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Obtener las campañas relacionadas
+            campañas = [relacion.campañas_id for relacion in relaciones]
+
+            # Serializar las campañas y devolverlas
+            serializer = CampañasSerializer(campañas, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # Si ocurre un error inesperado, devolver un error genérico
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class CampañaUsuarioDeleteView(APIView):
+
+    def delete(self, request, *args, **kwargs):
+        campañas=request.query_params.get('id_campaña')
+        usuarios=request.query_params.get('id_usuario')
+        # Filtra los objetos basados en los parámetros de la solicitud
+        campaña_usuario = CampañasUsuarios.objects.filter(usuarios_id=usuarios, campañas_id=campañas)
+        
+        # Verifica si existen resultados
+        if campaña_usuario.exists():
+            campaña_usuario.delete()  # Elimina los registros encontrados
+            return Response({"detail": "Registro eliminado correctamente."}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"detail": "No se encontró el registro."}, status=status.HTTP_404_NOT_FOUND)
+    

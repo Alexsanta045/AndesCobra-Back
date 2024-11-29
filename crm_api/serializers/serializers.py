@@ -330,3 +330,8 @@ class GestionesFilterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gestiones
         fields = ['usuario','cliente','resultado','fecha','comentarios',]
+        
+class TipoGestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tipo_gestion
+        fields = '__all__'
