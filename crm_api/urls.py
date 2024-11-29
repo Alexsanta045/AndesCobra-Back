@@ -1,13 +1,14 @@
 
-from django.urls import path, include, re_path
-from rest_framework.routers import DefaultRouter
-from .views import *
 from crm_api.serializers.serializers import *
+from django.urls import include, path, re_path
+from rest_framework.routers import DefaultRouter
+
+from . import auth_routes
+from .consultasPersonalizadas.consultasPersonalizadas import *
+from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
-from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
-from .consultasPersonalizadas.consultasPersonalizadas import *
-from . import auth_routes
+from .views import *
 
 router = DefaultRouter()
 
@@ -56,5 +57,8 @@ urlpatterns = [
     path('cliente_obligaciones/', ClientesObligaciones.as_view(), name='cliente_obligaciones'),
     path('colletion-management/', CollectionAndManagementView.as_view(), name='colletion-management'),
     path('campanas/interacciones/', InteraccionCampañasView.as_view(), name='get_interacciones_por_fecha'),
-    path('resultados_gestion/campaña/', ResultadosGestionView.as_view(), name='resultados_gestion_por_campaña')
+    path('resultados_gestion/campaña/', ResultadosGestionView.as_view(), name='resultados_gestion_por_campaña'),
+    path('campanas-por-usuario/', CampañasPorUsuario.as_view(), name='campanas-por-usuario'),  
+    path('borrarCampañas/', CampañaUsuarioDeleteView.as_view(), name='borrarCampañas'),  
+
 ]
