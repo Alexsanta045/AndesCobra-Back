@@ -10,10 +10,16 @@ from ..serializers.clienteObligacionesSerializer import ClienteObligacionesSeria
 from crm_api.serializers.collectionAndManagement import CollectionAndManagement
 from crm_api.serializers.interaccionSerializer import InteraccionSerializer
 from datetime import datetime
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 
 
 class ObligacionesView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
     
@@ -225,3 +231,20 @@ class InteraccionCampañasView(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+    
+    
+class ResultadosGestionView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        try:
+            campaña = request.query_params.get('campaña')
+            
+            resultado_gestion = ResultadosGestion.objects.filter(campaña=campaña, estado=True)
+            
+            serializer = ResultadosGestionSerializer(resultado_gestion, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

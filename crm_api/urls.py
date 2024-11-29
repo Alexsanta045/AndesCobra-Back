@@ -33,6 +33,8 @@ router.register(r'canales', CanalesViewSet, basename='Canales')
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
 router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUsuario') 
 router.register(r'CustomUser', CustomUserViewSet, basename='custom-user') 
+router.register(r'tipo_gestion', TipoGestionViewSet, basename='tipo_gestion') 
+
 
 
 
@@ -54,4 +56,5 @@ urlpatterns = [
     path('cliente_obligaciones/', ClientesObligaciones.as_view(), name='cliente_obligaciones'),
     path('colletion-management/', CollectionAndManagementView.as_view(), name='colletion-management'),
     path('campanas/interacciones/', InteraccionCampañasView.as_view(), name='get_interacciones_por_fecha'),
+    path('resultados_gestion/campaña/', ResultadosGestionView.as_view(), name='resultados_gestion_por_campaña')
 ]

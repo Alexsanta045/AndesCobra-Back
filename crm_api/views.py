@@ -26,8 +26,8 @@ class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
     serializer_class = CampañasSerializer
 
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = CampañasFilter
@@ -83,8 +83,8 @@ class ObligacionesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ObligacionesFilter
 
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 class PagosViewSet(viewsets.ModelViewSet):
@@ -209,3 +209,10 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 class ClienteObligacionesViewSet(viewsets.ModelViewSet):
     queryset = Clientes.objects.all()
     serializer_class = ClienteObligacionesSerializer
+
+class TipoGestionViewSet(viewsets.ModelViewSet):
+    queryset = Tipo_gestion.objects.all()
+    serializer_class = TipoGestionSerializer
+  
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
