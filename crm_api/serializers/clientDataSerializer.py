@@ -2,6 +2,7 @@ from rest_framework import serializers
 from ..models import *
 from collections import defaultdict
 
+
 class ClientDataSerializer(serializers.Serializer):
     obligacion = serializers.CharField(source="codigo")
     nroCliente = serializers.CharField(source="cliente.nit")
@@ -10,10 +11,10 @@ class ClientDataSerializer(serializers.Serializer):
     cartera = serializers.CharField(source="campaña.nombre")
     totalCartera = serializers.SerializerMethodField()
     totalCapital = serializers.SerializerMethodField()
-    tasaMora = serializers.SerializerMethodField()  # Se puede definir una fórmula si es necesario
+    tasaMora = serializers.SerializerMethodField()
     diasMora = serializers.SerializerMethodField()
     fechaUltPago = serializers.SerializerMethodField()
-    montoGestAnt = serializers.SerializerMethodField()  # Aclarar la lógica de este campo
+    montoGestAnt = serializers.SerializerMethodField()
     ultimaGestion = serializers.SerializerMethodField()
 
     def get_nombreCliente(self, obj):

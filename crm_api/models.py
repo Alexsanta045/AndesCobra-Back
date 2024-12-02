@@ -54,12 +54,12 @@ class CampañasUsuarios(models.Model):
 
                                 
 class Chat(models.Model):
-    CustomUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     mensaje = models.TextField(max_length=500)
     fecha = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
-        return f"{self.CustomUser}: '{self.mensaje}'"
+        return f"{self.usuario}: '{self.mensaje}'"
     
 
 class Tipo_identificacion(models.Model):
@@ -110,7 +110,7 @@ class Clientes(models.Model):
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
-        return f"{self.nit} - {self.nombres}"
+        return f"{self.nit}"
     
 class Direccion_cliente(models.Model):
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
