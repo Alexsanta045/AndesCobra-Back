@@ -174,15 +174,15 @@ class ResultadosGestionSerializer(serializers.ModelSerializer):
 
 
 class GestionesSerializer(serializers.ModelSerializer):
-    usuario = serializers.CharField()
-    cliente = serializers.CharField(source='cliente.nombres')
-    resultado = serializers.CharField(source='resultado.nombre', read_only=True)
-    fecha = serializers.DateTimeField()
-    comentarios = serializers.CharField(read_only=True)
+    usuario = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    cliente = serializers.PrimaryKeyRelatedField(queryset=Clientes.objects.all())
+    resultado = serializers.PrimaryKeyRelatedField(queryset=ResultadosGestion.objects.all())
+    comentarios = serializers.CharField()
 
     class Meta:
         model = Gestiones
         fields =  '__all__'
+        
 
     # Formatear la fecha sin segundos ni milisegundos
     def to_representation(self, instance):

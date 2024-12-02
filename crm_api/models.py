@@ -249,7 +249,7 @@ class Gestiones(models.Model):
     usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     resultado = models.ForeignKey(ResultadosGestion, on_delete=models.CASCADE)
-    fecha = models.DateTimeField()
+    fecha = models.DateTimeField(auto_now_add=True)
     comentarios = models.TextField(max_length=200, null=True, blank=True)
     tipo_gestion = models.ForeignKey(Tipo_gestion, on_delete=models.CASCADE)
     
