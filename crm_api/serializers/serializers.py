@@ -289,14 +289,7 @@ class Direccion_codeudorSerializer(serializers.Serializer):
         fields = '__all__'
 
 
-class Acuerdo_pagoSerializer(serializers.Serializer):
-    valor_cuota = serializers.CharField()
-    fecha_pago = serializers.CharField()
-    codigo_obligacion = serializers.CharField(source='codigo_obligacion.codigo')
-    usuario = serializers.SerializerMethodField()
-    descripcion = serializers.CharField()
-    estado=serializers.CharField() 
-    
+class Acuerdo_pagoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Acuerdo_pago
         fields = '__all__'
@@ -335,3 +328,5 @@ class TipoGestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tipo_gestion
         fields = '__all__'
+        
+        

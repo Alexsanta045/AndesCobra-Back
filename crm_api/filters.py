@@ -61,13 +61,13 @@ class ResultadosGestionFilter(django_filters.FilterSet):
 
 
 class GestionesFilter(django_filters.FilterSet):
-    cliente_nombres = django_filters.CharFilter(field_name='cliente__nombres', lookup_expr='icontains')
+    cliente = django_filters.CharFilter(field_name='cliente')
     resultado_nombre = django_filters.CharFilter(field_name='resultado__nombre', lookup_expr='icontains')
 
 
     class Meta:
         model = Gestiones
-        fields = ['cliente_nombres','resultado_nombre']
+        fields = ['cliente','resultado_nombre']
 
 
 class CodeudoresFilter(django_filters.FilterSet):

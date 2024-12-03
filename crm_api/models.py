@@ -210,7 +210,7 @@ class Obligaciones(models.Model):
         return codigo
     
 class Acuerdo_pago(models.Model):
-    valor_cuota = models.FloatField()
+    valor_cuota = models.FloatField() 
     fecha_pago = models.DateField()
     codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
     estado = models.CharField(default="Vigente")
