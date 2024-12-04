@@ -10,6 +10,7 @@ from .models import *
 from .models import CampañasUsuarios
 from .serializers import *
 from .serializers.clienteObligacionesSerializer import ClienteObligacionesSerializer
+from .serializers.historialGestiones import HistorialGestionesSerializer
 
 
 class RolesViewSet(viewsets.ModelViewSet):
@@ -113,7 +114,16 @@ class GestionesViewSet(viewsets.ModelViewSet):
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
     
-
+class HistorialGestionesViewSet(viewsets.ModelViewSet):
+    queryset = Gestiones.objects.all().order_by('-fecha')
+    serializer_class = HistorialGestionesSerializer
+    
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_class = GestionesFilter
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
 
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
