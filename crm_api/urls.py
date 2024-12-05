@@ -9,6 +9,7 @@ from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
 from .views import *
+from .passwordChange import *
 
 
 router = DefaultRouter()
@@ -39,8 +40,6 @@ router.register(r'tipo_gestion', TipoGestionViewSet, basename='tipo_gestion')
 router.register(r'historial_gestiones', HistorialGestionesViewSet, basename='historial_gestiones')
 
 
-
-
 urlpatterns = [
     path('', include(router.urls)),
     path('register/', auth_routes.register, name='register'),
@@ -62,5 +61,12 @@ urlpatterns = [
     path('resultados_gestion/campaña/', ResultadosGestionView.as_view(), name='resultados_gestion_por_campaña'),
     path('campanas-por-usuario/', CampañasPorUsuario.as_view(), name='campanas-por-usuario'),  
     path('borrarCampañas/', CampañaUsuarioDeleteView.as_view(), name='borrarCampañas'),  
+    path('change-password/', change_user_password, name='change_password'),
+    path('request-password-change/', change_user_password, name='request_password_change'),
+    path('get-password-change-requests/', get_password_change_requests, name='get_password_change_requests'),
+    path('reject-password-change-request/<str:username_or_email>/', reject_password_change_request),
+    path('get-password-change-history/', get_password_change_history, name='get-password-change-history'),  # URL para obtener el historial de contraseñas
+
+
 
 ]

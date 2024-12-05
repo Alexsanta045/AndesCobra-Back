@@ -257,3 +257,13 @@ class Gestiones(models.Model):
         return f"Usuario: {self.usuario}, Cliente: {self.cliente}, Resultado: {self.resultado}, Fecha: {self.fecha}"
     
 
+class PasswordChangeRequest(models.Model):
+    email_or_username = models.CharField(max_length=255)  # Puede ser un correo o un nombre de usuario
+    created_at = models.DateTimeField(auto_now_add=True)  # Fecha de creación de la solicitud
+    is_changed = models.BooleanField(default=False)  # Indicador de si la contraseña fue cambiada
+    changed_at = models.DateTimeField(null=True, blank=True)  # Fecha en que la contraseña fue cambiada
+    is_rejected = models.BooleanField(default=False)  # Nuevo campo para marcar si la solicitud fue rechazada
+
+
+    def __str__(self):
+        return f'Solicitud de {self.email_or_username} - {self.created_at} - {"Cambiada" if self.is_changed else "Pendiente"}'
