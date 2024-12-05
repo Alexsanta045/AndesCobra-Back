@@ -143,7 +143,6 @@ class MutearAPIView(APIView):
         except requests.exceptions.RequestException as e:
             # Manejo de errores en la solicitud a la API externa
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
 
 class RolesViewSet(viewsets.ModelViewSet):
     queryset = Roles.objects.all()
@@ -296,12 +295,9 @@ class CiudadViewSet(viewsets.ModelViewSet):
 
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
-<<<<<<< HEAD
 
 
-=======
     
->>>>>>> abbae070fc6ce03d0734e1be59eff7412c5d5146
 class Telefono_clienteViewSet(viewsets.ModelViewSet):
     queryset = Telefono_cliente.objects.all()
     serializer_class = Telefono_clienteSerializer
