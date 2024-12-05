@@ -78,20 +78,37 @@ class ObligacionesView(APIView):
 class AcuerdosDePagoView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
+        cliente = request.query_params.get('cliente')
+
+        # Validación de parámetros
+        if not campaña:
+            return Response({"error": "El parámetro 'campaña' es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        acuerdos = []  
 
         try:
-            obligaciones = Obligaciones.objects.filter(campaña=campaña)
-            
+            # Filtro de obligaciones basado en los parámetros
+            if campaña and not cliente:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña)
+            elif campaña and cliente:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña, cliente=cliente)
+            else:
+                return Response({"error": "Parámetros no válidos."}, status=status.HTTP_400_BAD_REQUEST)
+
+            if not obligaciones:
+                return Response({"error": "No se encontraron obligaciones para esta campaña o cliente."}, status=status.HTTP_404_NOT_FOUND)
+
+            # Acumular acuerdos de pago
             for obligacion in obligaciones:
-                acuerdos = Acuerdo_pago.objects.filter(codigo_obligacion=obligacion)
-                
-                serializer = Acuerdo_pagoSerializer(acuerdos, many=True)
-            
+                acuerdos.extend(Acuerdo_pago.objects.filter(codigo_obligacion=obligacion).order_by('-fecha_pago'))
+
+            # Serializar los acuerdos encontrados
+            serializer = Acuerdo_pagoSerializer(acuerdos, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        except Obligaciones.DoesNotExist:
-            return Response({"error": "No se encontraron acuerdos de pago para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
-        
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class ClientesView(APIView):
     def get(self, request, *args, **kwargs):
@@ -113,8 +130,6 @@ class ClientesView(APIView):
         
         except Obligaciones.DoesNotExist:
             return Response({"error": "No se encontraron clientes para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
-
-
 
 
 class UsuariosView(APIView):
@@ -172,21 +187,34 @@ class UsuariosView(APIView):
 class PagosView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
+        cliente = request.query_params.get('cliente')
         pagos_data = []
 
+        if not campaña:
+            return Response({"error": "El parámetro 'campaña' es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            obligaciones = Obligaciones.objects.filter(campaña=campaña)
+            # Filtrar las obligaciones basadas en los parámetros de campaña y cliente
+            if cliente:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña, cliente=cliente)
+            else:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña)
 
+            # Verificar si se encontraron obligaciones
+            if not obligaciones:
+                return Response({"error": "No se encontraron obligaciones para esta campaña y cliente."}, status=status.HTTP_404_NOT_FOUND)
+
+            # Acumular los pagos en la lista
             for obligacion in obligaciones:
-                pagos = Pagos.objects.filter(obligacion=obligacion)
+                pagos = Pagos.objects.filter(obligacion=obligacion).order_by('-fecha')
+                pagos_data.extend(PagosSerializer(pagos, many=True).data)
 
-                serializer = PagosSerializer(pagos, many=True)
-                pagos_data.append(serializer.data)
-                
+            # Responder con los pagos serializados
             return Response(pagos_data, status=status.HTTP_200_OK)
-        
-        except Obligaciones.DoesNotExist:
-            return Response({"error": "No se encontrararon pagos para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class GestionesView(APIView):
     def get(self, request, *args, **kwargs):
