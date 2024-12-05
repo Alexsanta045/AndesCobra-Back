@@ -3,13 +3,22 @@ from crm_api.serializers.serializers import *
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from ..models import *
 from ..serializers import *
-from ..serializers.clienteGestionSerializer import ClienteObligacionesSerializer
+from ..serializers.clienteObligacionesSerializer import ClienteObligacionesSerializer
+from crm_api.serializers.collectionAndManagement import CollectionAndManagement
+from crm_api.serializers.interaccionSerializer import InteraccionSerializer
+from datetime import datetime
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+
 
 
 class ObligacionesView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
     
@@ -69,20 +78,37 @@ class ObligacionesView(APIView):
 class AcuerdosDePagoView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
+        cliente = request.query_params.get('cliente')
+
+        # Validación de parámetros
+        if not campaña:
+            return Response({"error": "El parámetro 'campaña' es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        acuerdos = []  
 
         try:
-            obligaciones = Obligaciones.objects.filter(campaña=campaña)
-            
+            # Filtro de obligaciones basado en los parámetros
+            if campaña and not cliente:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña)
+            elif campaña and cliente:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña, cliente=cliente)
+            else:
+                return Response({"error": "Parámetros no válidos."}, status=status.HTTP_400_BAD_REQUEST)
+
+            if not obligaciones:
+                return Response({"error": "No se encontraron obligaciones para esta campaña o cliente."}, status=status.HTTP_404_NOT_FOUND)
+
+            # Acumular acuerdos de pago
             for obligacion in obligaciones:
-                acuerdos = Acuerdo_pago.objects.filter(codigo_obligacion=obligacion)
-                
-                serializer = Acuerdo_pagoSerializer(acuerdos, many=True)
-            
+                acuerdos.extend(Acuerdo_pago.objects.filter(codigo_obligacion=obligacion).order_by('-fecha_pago'))
+
+            # Serializar los acuerdos encontrados
+            serializer = Acuerdo_pagoSerializer(acuerdos, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        except Obligaciones.DoesNotExist:
-            return Response({"error": "No se encontraron acuerdos de pago para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
-        
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class ClientesView(APIView):
     def get(self, request, *args, **kwargs):
@@ -104,8 +130,6 @@ class ClientesView(APIView):
         
         except Obligaciones.DoesNotExist:
             return Response({"error": "No se encontraron clientes para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
-
-
 
 
 class UsuariosView(APIView):
@@ -163,21 +187,34 @@ class UsuariosView(APIView):
 class PagosView(APIView):
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
+        cliente = request.query_params.get('cliente')
         pagos_data = []
 
+        if not campaña:
+            return Response({"error": "El parámetro 'campaña' es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            obligaciones = Obligaciones.objects.filter(campaña=campaña)
+            # Filtrar las obligaciones basadas en los parámetros de campaña y cliente
+            if cliente:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña, cliente=cliente)
+            else:
+                obligaciones = Obligaciones.objects.filter(campaña=campaña)
 
+            # Verificar si se encontraron obligaciones
+            if not obligaciones:
+                return Response({"error": "No se encontraron obligaciones para esta campaña y cliente."}, status=status.HTTP_404_NOT_FOUND)
+
+            # Acumular los pagos en la lista
             for obligacion in obligaciones:
-                pagos = Pagos.objects.filter(obligacion=obligacion)
+                pagos = Pagos.objects.filter(obligacion=obligacion).order_by('-fecha')
+                pagos_data.extend(PagosSerializer(pagos, many=True).data)
 
-                serializer = PagosSerializer(pagos, many=True)
-                pagos_data.append(serializer.data)
-                
+            # Responder con los pagos serializados
             return Response(pagos_data, status=status.HTTP_200_OK)
-        
-        except Obligaciones.DoesNotExist:
-            return Response({"error": "No se encontrararon pagos para esta campaña"}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class GestionesView(APIView):
     def get(self, request, *args, **kwargs):
@@ -207,6 +244,74 @@ class ClientDataView(APIView):
         return Response(serializer.data)
 
 
+class ClientesObligaciones(APIView):
+    def get(self, request):
+        cliente = request.query_params.get('cliente')
+        
+        if not cliente:
+            return Response(
+                {"error": "el parámetro cliente es obligatorio."},
+                status=status.HTTP_400_BAD_REQUEST)
+        
+        cliente_data = Clientes.objects.filter(nit=cliente)
+        serializer = ClienteObligacionesSerializer(cliente_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+class CollectionAndManagementView(APIView):
+    def get(self, request, *args, **kwargs):
+        campañas = Campañas.objects.all()
+        serializer = CollectionAndManagement(campañas, many=True)
+        return Response(serializer.data)
+
+class InteraccionCampañasView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Obtener todas las campañas
+        campañas = Campañas.objects.all()
+        
+        # Calcular los totales de SMS, WhatsApp y llamadas
+        total_sms = 0
+        total_whatsapp = 0
+        total_llamadas = 0
+
+        # Recorremos todas las campañas para calcular los totales
+        for campaña in campañas:
+            total_sms += Gestiones.objects.filter(resultado__campaña=campaña, tipo_gestion__nombre="SMS").count()
+            total_whatsapp += Gestiones.objects.filter(resultado__campaña=campaña, tipo_gestion__nombre="WhatsApp").count()
+            total_llamadas += Gestiones.objects.filter(resultado__campaña=campaña, tipo_gestion__nombre="Llamada").count()
+
+        # Usar el serializer para las campañas
+        serializer = InteraccionSerializer(campañas, many=True)
+
+        # Crear los totales
+        total_data = {
+            "total_sms": total_sms,
+            "total_whatsapp": total_whatsapp,
+            "total_llamadas": total_llamadas
+        }
+
+        # Devolver las campañas junto con los totales
+        response_data = {
+            "campañas": serializer.data,
+            "total": total_data
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+    
+    
+class ResultadosGestionView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        try:
+            campaña = request.query_params.get('campaña')
+            
+            resultado_gestion = ResultadosGestion.objects.filter(campaña=campaña, estado=True)
+            
+            serializer = ResultadosGestionSerializer(resultado_gestion, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class CampañasPorUsuario(APIView):
     def get(self, request, *args, **kwargs):
@@ -256,8 +361,4 @@ class CampañaUsuarioDeleteView(APIView):
             return Response({"detail": "Registro eliminado correctamente."}, status=status.HTTP_204_NO_CONTENT)
         else:
             return Response({"detail": "No se encontró el registro."}, status=status.HTTP_404_NOT_FOUND)
-    
-    
-    
-
     

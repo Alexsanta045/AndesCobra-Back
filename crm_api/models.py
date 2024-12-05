@@ -210,7 +210,7 @@ class Obligaciones(models.Model):
         return codigo
     
 class Acuerdo_pago(models.Model):
-    valor_cuota = models.FloatField()
+    valor_cuota = models.FloatField() 
     fecha_pago = models.DateField()
     codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
     estado = models.CharField(default="Vigente")
@@ -238,14 +238,32 @@ class ResultadosGestion(models.Model):
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
     
     def __str__(self):
-        return f"{self.nombre} - estado: {self.estado}"
+        return f"{self.nombre} - campaña: {self.campaña}"
+
+class Tipo_gestion(models.Model):
+    nombre = models.CharField(max_length=60)
+    def __str__(self):
+        return self.nombre
 
 class Gestiones(models.Model):
     usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     resultado = models.ForeignKey(ResultadosGestion, on_delete=models.CASCADE)
-    fecha = models.DateTimeField()
+    fecha = models.DateTimeField(auto_now_add=True)
     comentarios = models.TextField(max_length=200, null=True, blank=True)
+    tipo_gestion = models.ForeignKey(Tipo_gestion, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"Usuario: {self.usuario}, Cliente: {self.cliente}, Resultado: {self.resultado}, Fecha: {self.fecha}"
+    
+
+class PasswordChangeRequest(models.Model):
+    email_or_username = models.CharField(max_length=255)  # Puede ser un correo o un nombre de usuario
+    created_at = models.DateTimeField(auto_now_add=True)  # Fecha de creación de la solicitud
+    is_changed = models.BooleanField(default=False)  # Indicador de si la contraseña fue cambiada
+    changed_at = models.DateTimeField(null=True, blank=True)  # Fecha en que la contraseña fue cambiada
+    is_rejected = models.BooleanField(default=False)  # Nuevo campo para marcar si la solicitud fue rechazada
+
+
+    def __str__(self):
+        return f'Solicitud de {self.email_or_username} - {self.created_at} - {"Cambiada" if self.is_changed else "Pendiente"}'

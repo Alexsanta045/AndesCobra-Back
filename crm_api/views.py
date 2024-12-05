@@ -14,7 +14,8 @@ from rest_framework.views import APIView
 from .filters import *
 from .models import *
 from .serializers import *
-from .serializers.clienteGestionSerializer import ClienteObligacionesSerializer
+from .serializers.clienteObligacionesSerializer import ClienteObligacionesSerializer
+from .serializers.historialGestiones import HistorialGestionesSerializer
 
 
 class DialWolkvoxAPIView(APIView):
@@ -154,12 +155,12 @@ class RolesViewSet(viewsets.ModelViewSet):
 class CampañasViewSet(viewsets.ModelViewSet):
     queryset = Campañas.objects.all()
     serializer_class = CampañasSerializer
-
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
-
+    
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = CampañasFilter
+    
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
 
 
 class CampañaUsuarioViewSet(viewsets.ModelViewSet):
@@ -245,7 +246,17 @@ class GestionesViewSet(viewsets.ModelViewSet):
 
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
-
+    
+class HistorialGestionesViewSet(viewsets.ModelViewSet):
+    queryset = Gestiones.objects.all().order_by('-fecha')
+    serializer_class = HistorialGestionesSerializer
+    
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_class = GestionesFilter
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
 
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
@@ -285,8 +296,12 @@ class CiudadViewSet(viewsets.ModelViewSet):
 
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
+<<<<<<< HEAD
 
 
+=======
+    
+>>>>>>> abbae070fc6ce03d0734e1be59eff7412c5d5146
 class Telefono_clienteViewSet(viewsets.ModelViewSet):
     queryset = Telefono_cliente.objects.all()
     serializer_class = Telefono_clienteSerializer
@@ -346,3 +361,10 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 class ClienteObligacionesViewSet(viewsets.ModelViewSet):
     queryset = Clientes.objects.all()
     serializer_class = ClienteObligacionesSerializer
+
+class TipoGestionViewSet(viewsets.ModelViewSet):
+    queryset = Tipo_gestion.objects.all()
+    serializer_class = TipoGestionSerializer
+  
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
