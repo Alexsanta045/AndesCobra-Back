@@ -10,6 +10,7 @@ from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
 from .views import *
 from .passwordChange import *
+from .generalStatistics import *
 
 
 router = DefaultRouter()
@@ -66,7 +67,7 @@ urlpatterns = [
     path('get-password-change-requests/', get_password_change_requests, name='get_password_change_requests'),
     path('reject-password-change-request/<str:username_or_email>/', reject_password_change_request),
     path('get-password-change-history/', get_password_change_history, name='get-password-change-history'),  # URL para obtener el historial de contraseñas
-
-
+    path('gestiones-por-dia/', gestiones_por_dia, name='gestiones_por_dia'),
+    path('estadisticas-asesor/', estadisticas_asesor, name='estadisticas_asesor'),
 
 ]
