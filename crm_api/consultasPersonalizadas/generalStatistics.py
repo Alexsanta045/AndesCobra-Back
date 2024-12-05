@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils import timezone
 from datetime import timedelta
-from .models import Gestiones
+from ..models import Gestiones
 import calendar
 
 def gestiones_por_dia(request):
@@ -23,7 +23,6 @@ def gestiones_por_dia(request):
         3: "Jueves",
         4: "Viernes",
         5: "Sábado",
-        6: "Domingo",
     }
 
     # Filtramos y preparamos el formato para la respuesta

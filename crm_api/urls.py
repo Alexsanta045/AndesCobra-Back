@@ -9,8 +9,8 @@ from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
 from .views import *
-from .passwordChange import *
-from .generalStatistics import *
+from .consultasPersonalizadas.passwordChange import *
+from .consultasPersonalizadas.generalStatistics import *
 
 
 router = DefaultRouter()
