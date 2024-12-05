@@ -55,5 +55,7 @@ urlpatterns = [
     path('client-data/', ClientDataView.as_view(), name='client-data'),
     path('campanas-por-usuario/', CampañasPorUsuario.as_view(), name='campanas-por-usuario'),  
     path('borrarCampañas/', CampañaUsuarioDeleteView.as_view(), name='borrarCampañas'),  
-
+    path('dial/', DialWolkvoxAPIView.as_view(), name='dial-wolkvox'),  
+    path('colgar/', ColgarAPIView.as_view(), name='colgar'),
+    path('mutear/', MutearAPIView.as_view(), name='mutear'),
 ]

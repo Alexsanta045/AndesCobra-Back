@@ -257,3 +257,7 @@ class CampañaUsuarioDeleteView(APIView):
         else:
             return Response({"detail": "No se encontró el registro."}, status=status.HTTP_404_NOT_FOUND)
     
+    
+    
+
+    

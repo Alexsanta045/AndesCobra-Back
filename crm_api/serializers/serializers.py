@@ -3,6 +3,9 @@ from ..models import *
 from rest_framework import serializers
 
 
+
+    
+    
 class CampañasSerializer(serializers.ModelSerializer):
     
     class Meta:
