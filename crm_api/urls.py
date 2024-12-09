@@ -58,6 +58,7 @@ urlpatterns = [
     path('pagos_masivos/', PagosMasivos.as_view(), name='pagos_masivos'),
     path('actualizar_acuerdos_pagos/', ActualizarAcuerdosPagoView.as_view(), name='actualizar_acuerdos_pagos'),
     path('client-data/', ClientDataView.as_view(), name='client-data'),
+    path('campa/', CampañasView.as_view(), name='campa'),
     path('cliente_obligaciones/', ClientesObligaciones.as_view(), name='cliente_obligaciones'),
     path('colletion-management/', CollectionAndManagementView.as_view(), name='colletion-management'),
     path('campanas/interacciones/', InteraccionCampañasView.as_view(), name='get_interacciones_por_fecha'),

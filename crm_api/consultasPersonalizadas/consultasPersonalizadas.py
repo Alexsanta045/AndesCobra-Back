@@ -73,7 +73,6 @@ class ObligacionesView(APIView):
         except Exception as e:
             # Si ocurre un error inesperado, devolvemos un error genérico.
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
         
 class AcuerdosDePagoView(APIView):
     
@@ -390,3 +389,21 @@ class CampañaUsuarioDeleteView(APIView):
         else:
             return Response({"detail": "No se encontró el registro."}, status=status.HTTP_404_NOT_FOUND)
     
+#     def get(self, request):
+#         obligaciones = Ob
+#         serializer = ClienteObligacionesSerializer()
+#         return Response(serializer.data)
+
+class CampañasView(APIView):
+    def delete(self, request, *args, **kwargs):
+        campaña = request.query_params.get('campaña')    
+        
+        try:
+            campaña = Campañas.objects.get(nombre=campaña)
+            
+            campaña.delete()
+            
+            return Response({"mensaje": f"La campaña '{campaña.nombre}' ha sido eliminada."}, status=status.HTTP_204_NO_CONTENT)
+        
+        except Campañas.DoesNotExist:
+            return Response({"error": "No se encontro esta campaña"}, status=status.HTTP_404_NOT_FOUND)
