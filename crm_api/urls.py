@@ -14,6 +14,7 @@ from .wolkwox_api.wolkvox_colgar import ColgarAPIView
 from .wolkwox_api.wolkvox_dial import DialWolkvoxAPIView
 from .wolkwox_api.wolkvox_mutear import MutearAPIView
 
+from .obligaciones.crearCliente import ClientesViewSet
 
 router = DefaultRouter()
 
@@ -21,21 +22,21 @@ router.register(r'roles', RolesViewSet, basename='Roles')
 router.register(r'campanas-api', CampañasViewSet, basename='Campañas')
 router.register(r'clientes', ClientesViewSet, basename='Clientes')
 router.register(r'telefono_cliente', Telefono_clienteViewSet, basename='Telefono cliente')
-router.register(r'direccion_cliente', Direccion_clienteViewSet, basename='Dirección cliente')
+# router.register(r'direccion_cliente', Direccion_clienteViewSet, basename='Dirección cliente')
 router.register(r'referencias', ReferenciasViewSet, basename='Referencias')
+router.register(r'telefono_referencias', Telefono_referenciaViewSet, basename='Telefono referencia')
+# router.register(r'direccion_referencias', Direccion_referenciaViewSet, basename='Direccion referencias')
 router.register(r'obligaciones', ObligacionesViewSet, basename='Obligaciones')
 router.register(r'pagos', PagosViewSet, basename='Pagos')
 router.register(r'resultadosGestion', ResultadosGestionViewSet, basename='ResultadosGestion')
 router.register(r'gestiones', GestionesViewSet, basename='Gestiones')
 router.register(r'chat', ChatViewSet, basename='Chat')
-router.register(r'tipo_identificacion', Tipo_identificacionViewSet, basename='Tipo de identificacion')
-router.register(r'pais', PaisViewSet, basename='País')
-router.register(r'departamento', DepartamentoViewSet, basename='Departamento')
-router.register(r'ciudad', CiudadViewSet, basename='Ciudad')
+# router.register(r'departamento', DepartamentoViewSet, basename='Departamento')
+# router.register(r'ciudad', CiudadViewSet, basename='Ciudad')
 router.register(r'codeudores', CodeudoresViewSet, basename='Codeudores')
 router.register(r'telefono_codeudor', Telefono_codeudorViewSet, basename='Telefono codeudor')
-router.register(r'direccion_codeudor', Direccion_codeudorViewSet, basename='Dirección codeudor')
-router.register(r'canales', CanalesViewSet, basename='Canales')
+# router.register(r'direccion_codeudor', Direccion_codeudorViewSet, basename='Dirección codeudor')
+# router.register(r'canales', CanalesViewSet, basename='Canales')
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
 router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUsuario') 
 router.register(r'CustomUser', CustomUserViewSet, basename='custom-user') 
@@ -72,8 +73,7 @@ urlpatterns = [
     path('request-password-change/', change_user_password, name='request_password_change'),
     path('get-password-change-requests/', get_password_change_requests, name='get_password_change_requests'),
     path('reject-password-change-request/<str:username_or_email>/', reject_password_change_request),
-    path('get-password-change-history/', get_password_change_history, name='get-password-change-history'),  # URL para obtener el historial de contraseñas
-
-
+    path('get-password-change-history/', get_password_change_history, name='get-password-change-history'),  
+    path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'), 
 
 ]

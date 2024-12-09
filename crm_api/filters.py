@@ -43,7 +43,8 @@ class ObligacionesFilter(django_filters.FilterSet):
 
     class Meta:
         model = Obligaciones
-        fields = ['codigo', 'campaña', 'cliente', 'fecha_obligacion', 'fecha_vencimiento_cuota', 'valor_capital', 'valor_mora']
+        fields = ['codigo', 'campaña', 'cliente']
+        # fields = ['codigo', 'campaña', 'cliente', 'fecha_obligacion', 'fecha_vencimiento_cuota', 'valor_capital', 'valor_mora']
 
 class PagosFilter(django_filters.FilterSet):
 

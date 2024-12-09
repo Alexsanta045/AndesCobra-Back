@@ -2,18 +2,18 @@ from rest_framework import serializers
 from django.db.models import Sum
 from datetime import datetime
 from ..models import Clientes, Obligaciones, Telefono_cliente
-from .serializers import CanalesSerializer
+# from .serializers import CanalesSerializer
 
 class ClienteObligacionesSerializer(serializers.ModelSerializer):
     nit = serializers.CharField()
     nombres = serializers.CharField()
-    email = serializers.CharField()
+    # email = serializers.CharField()
     numero_celular = serializers.SerializerMethodField()
     total_obligaciones = serializers.SerializerMethodField()
     total_valor_capital = serializers.SerializerMethodField()
     total_valor_mora = serializers.SerializerMethodField()
     dias_mora = serializers.SerializerMethodField()
-    canales_autorizados = CanalesSerializer()
+    # canales_autorizados = CanalesSerializer()
     
     class Meta:
         model = Clientes
