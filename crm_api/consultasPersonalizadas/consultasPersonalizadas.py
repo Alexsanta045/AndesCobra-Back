@@ -191,3 +191,17 @@ class ClientDataView(APIView):
 #         obligaciones = Ob
 #         serializer = ClienteObligacionesSerializer()
 #         return Response(serializer.data)
+
+class CampañasView(APIView):
+    def delete(self, request, *args, **kwargs):
+        campaña = request.query_params.get('campaña')    
+        
+        try:
+            campaña = Campañas.objects.get(nombre=campaña)
+            
+            campaña.delete()
+            
+            return Response({"mensaje": f"La campaña '{campaña.nombre}' ha sido eliminada."}, status=status.HTTP_204_NO_CONTENT)
+        
+        except Campañas.DoesNotExist:
+            return Response({"error": "No se encontro esta campaña"}, status=status.HTTP_404_NOT_FOUND)
