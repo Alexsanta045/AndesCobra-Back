@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.db.models import Sum
 from datetime import datetime
 from ..models import Clientes, Obligaciones, Telefono_cliente
+from .serializers import CanalesSerializer
 
 class ClienteObligacionesSerializer(serializers.ModelSerializer):
     nit = serializers.CharField()
@@ -12,6 +13,7 @@ class ClienteObligacionesSerializer(serializers.ModelSerializer):
     total_valor_capital = serializers.SerializerMethodField()
     total_valor_mora = serializers.SerializerMethodField()
     dias_mora = serializers.SerializerMethodField()
+    canales_autorizados = CanalesSerializer()
     
     class Meta:
         model = Clientes

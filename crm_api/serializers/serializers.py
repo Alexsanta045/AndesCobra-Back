@@ -3,6 +3,9 @@ from ..models import *
 from rest_framework import serializers
 
 
+
+    
+    
 class CampañasSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -174,15 +177,15 @@ class ResultadosGestionSerializer(serializers.ModelSerializer):
 
 
 class GestionesSerializer(serializers.ModelSerializer):
-    usuario = serializers.CharField()
-    cliente = serializers.CharField(source='cliente.nombres')
-    resultado = serializers.CharField(source='resultado.nombre', read_only=True)
-    fecha = serializers.DateTimeField()
-    comentarios = serializers.CharField(read_only=True)
+    usuario = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    cliente = serializers.PrimaryKeyRelatedField(queryset=Clientes.objects.all())
+    resultado = serializers.PrimaryKeyRelatedField(queryset=ResultadosGestion.objects.all())
+    comentarios = serializers.CharField()
 
     class Meta:
         model = Gestiones
         fields =  '__all__'
+        
 
     # Formatear la fecha sin segundos ni milisegundos
     def to_representation(self, instance):
@@ -289,14 +292,7 @@ class Direccion_codeudorSerializer(serializers.Serializer):
         fields = '__all__'
 
 
-class Acuerdo_pagoSerializer(serializers.Serializer):
-    valor_cuota = serializers.CharField()
-    fecha_pago = serializers.CharField()
-    codigo_obligacion = serializers.CharField(source='codigo_obligacion.codigo')
-    usuario = serializers.SerializerMethodField()
-    descripcion = serializers.CharField()
-    estado=serializers.CharField() 
-    
+class Acuerdo_pagoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Acuerdo_pago
         fields = '__all__'
@@ -330,3 +326,10 @@ class GestionesFilterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gestiones
         fields = ['usuario','cliente','resultado','fecha','comentarios',]
+        
+class TipoGestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tipo_gestion
+        fields = '__all__'
+        
+        

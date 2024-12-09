@@ -1,7 +1,8 @@
 import django_filters
-from .models import *
-from django_filters import rest_framework as filters
 from django.db.models import JSONField
+from django_filters import rest_framework as filters
+
+from .models import *
 
 
 class CampañasFilter(django_filters.FilterSet):
@@ -20,6 +21,14 @@ class ClientesFilter(django_filters.FilterSet):
         model = Clientes
         fields = ['nit', 'nombres', 'apellidos', 'email']
         
+        
+class CampañaUsuarioFilter(django_filters.FilterSet):
+    id_campaña = django_filters.NumberFilter(field_name='campañas_id__id',)
+    id_usuario = django_filters.NumberFilter(field_name='usuarios_id__id',)
+    class Meta:
+        model = CampañasUsuarios
+        fields = ['id_campaña', 'id_usuario']
+
 class ReferenciasFilter(django_filters.FilterSet):
     nombre = django_filters.CharFilter(lookup_expr='icontains')
     nit = django_filters.CharFilter(lookup_expr='icontains')
@@ -52,13 +61,13 @@ class ResultadosGestionFilter(django_filters.FilterSet):
 
 
 class GestionesFilter(django_filters.FilterSet):
-    cliente_nombres = django_filters.CharFilter(field_name='cliente__nombres', lookup_expr='icontains')
+    cliente = django_filters.CharFilter(field_name='cliente')
     resultado_nombre = django_filters.CharFilter(field_name='resultado__nombre', lookup_expr='icontains')
 
 
     class Meta:
         model = Gestiones
-        fields = ['cliente_nombres','resultado_nombre']
+        fields = ['cliente','resultado_nombre']
 
 
 class CodeudoresFilter(django_filters.FilterSet):
