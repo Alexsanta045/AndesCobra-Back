@@ -76,6 +76,9 @@ class ObligacionesView(APIView):
 
         
 class AcuerdosDePagoView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
         cliente = request.query_params.get('cliente')
@@ -111,6 +114,9 @@ class AcuerdosDePagoView(APIView):
 
 
 class ClientesView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
 
@@ -133,6 +139,9 @@ class ClientesView(APIView):
 
 
 class UsuariosView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         campaña_id = request.query_params.get('campana')
         role_id = request.query_params.get('role')
@@ -185,6 +194,9 @@ class UsuariosView(APIView):
         
             
 class PagosView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         campaña = request.query_params.get('campaña')
         cliente = request.query_params.get('cliente')
@@ -217,6 +229,8 @@ class PagosView(APIView):
 
 
 class GestionesView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         campaña_id = request.query_params.get('campaña')
         try:
@@ -238,6 +252,9 @@ class GestionesView(APIView):
 
 
 class ClientDataView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         obligaciones = Obligaciones.objects.select_related("cliente", "campaña").all()
         serializer = ClientDataSerializer(obligaciones, many=True)
@@ -245,6 +262,9 @@ class ClientDataView(APIView):
 
 
 class ClientesObligaciones(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         cliente = request.query_params.get('cliente')
         
@@ -263,6 +283,9 @@ class CollectionAndManagementView(APIView):
         return Response(serializer.data)
 
 class InteraccionCampañasView(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         # Obtener todas las campañas
         campañas = Campañas.objects.all()
@@ -314,6 +337,9 @@ class ResultadosGestionView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class CampañasPorUsuario(APIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         # Obtener el id del usuario desde los parámetros de la consulta
         usuario_id = request.query_params.get('usuario_id')
@@ -348,6 +374,8 @@ class CampañasPorUsuario(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class CampañaUsuarioDeleteView(APIView):
+    
+
 
     def delete(self, request, *args, **kwargs):
         campañas=request.query_params.get('id_campaña')

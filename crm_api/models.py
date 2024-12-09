@@ -110,7 +110,7 @@ class Clientes(models.Model):
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
-        return f"{self.nit}"
+        return self.nit
     
 class Direccion_cliente(models.Model):
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)

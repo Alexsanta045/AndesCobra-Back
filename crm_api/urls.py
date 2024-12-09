@@ -10,6 +10,9 @@ from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
 from .views import *
 from .passwordChange import *
+from .wolkwox_api.wolkvox_colgar import ColgarAPIView
+from .wolkwox_api.wolkvox_dial import DialWolkvoxAPIView
+from .wolkwox_api.wolkvox_mutear import MutearAPIView
 
 
 router = DefaultRouter()
