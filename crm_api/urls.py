@@ -9,13 +9,13 @@ from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
 from .views import *
-from .obligaciones.crearCliente import ClientesViewSet
+# from .obligaciones.crearCliente import ClientesViewSet
 
 router = DefaultRouter()
 
 router.register(r'roles', RolesViewSet, basename='Roles')
 router.register(r'campanas-api', CampañasViewSet, basename='Campañas')
-router.register(r'clientes', ClientesViewSet, basename='Clientes')
+# router.register(r'clientes', ClientesViewSet, basename='Clientes')
 router.register(r'telefono_cliente', Telefono_clienteViewSet, basename='Telefono cliente')
 # router.register(r'direccion_cliente', Direccion_clienteViewSet, basename='Dirección cliente')
 router.register(r'referencias', ReferenciasViewSet, basename='Referencias')

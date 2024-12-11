@@ -77,7 +77,7 @@ class Clientes(models.Model):
     empresa = models.CharField(max_length=60, blank=True, null=True)
     cantidad_hijos = models.IntegerField(blank=True, null=True)
     estrato = models.IntegerField(blank=True, null=True)
-    califiacion_cliente = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    calificacion_cliente = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
     tipo_persona = models.CharField(max_length=60, blank=True, null=True)
     profesion = models.CharField(max_length=60, blank=True, null=True)
     estado_fraude = models.CharField(max_length=70, blank=True, null=True)
@@ -96,20 +96,33 @@ class Telefono_cliente(models.Model):
 
     def __str__(self):
         return self.numero
-    
+
+
+class Codeudores(models.Model):
+    nit = models.CharField(max_length=15, primary_key=True)
+    nombres = models.CharField(max_length=70)
+    email = models.EmailField(blank=True, null=True)
+    direccion = models.CharField(max_length=80, blank=True, null=True)
+    ciudad = models.CharField(max_length=50, blank=True, null=True)
+    codigo_dane = models.CharField(max_length=10, blank=True, null=True)
+    campos_opcionales = models.JSONField(default=dict, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.nombres}"
 
 class Obligaciones(models.Model):
     codigo = models.CharField(max_length=25, unique=True, editable=False, primary_key=True)
     codigo_obligacion = models.IntegerField(null=True, blank=True)
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
+    codeudor = models.ForeignKey(Codeudores, on_delete=models.SET_NULL, null=True, blank=True, related_name='obligaciones')
     valor_vencido = models.DecimalField(max_digits=11, decimal_places=2)
     fecha_obligacion = models.DateField(null=True, blank=True)
     fecha_vencimiento = models.DateField(null=True, blank=True)
     valor_obligacion = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
     valor_cuota = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     saldo_capital = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
-    sado_total = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+    saldo_total = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
     tipo_producto = models.CharField(max_length=50, null=True, blank=True)
     dias_mora = models.IntegerField(null=True, blank=True)
     valor_ultimo_pago = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
@@ -120,17 +133,17 @@ class Obligaciones(models.Model):
     ciclo = models.CharField(max_length=50, null=True, blank=True)
     etapa_actual_obligacion = models.CharField(max_length=60, null=True, blank=True)
     fecha_inactivacion = models.DateField(null=True, blank=True)
-    estado_operaional = models.CharField(max_length=60, null=True, blank=True)
+    estado_operacional = models.CharField(max_length=60, null=True, blank=True)
     dias_mora_inicial = models.IntegerField(null=True, blank=True)
     rango_mora_inicial = models.CharField(max_length=70, null=True, blank=True)
     rango_mora_actual = models.CharField(max_length=70, null=True, blank=True)
     fecha_inicio_mora = models.DateField(null=True, blank=True)
     tasa_interes = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     porc_gastos_cobranza = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
-    valor_gasto_cobranza = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
+    valor_gastos_cobranza = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
     valor_iva_gastos = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     valor_otros_conceptos = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
-    feha_castigo = models.DateField(null=True, blank=True)
+    fecha_castigo = models.DateField(null=True, blank=True)
     cuotas_vencidas = models.IntegerField(null=True, blank=True)
     cuotas_pendientes = models.IntegerField(null=True, blank=True)
     cuotas_pagadas = models.IntegerField(null=True, blank=True)
@@ -141,8 +154,8 @@ class Obligaciones(models.Model):
     puntaje_credito = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     puntaje_comportamiento = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     marca_especial = models.CharField(max_length=65, null=True, blank=True)
-    feha_corte_obligacion = models.DateField(null=True, blank=True)
-    fecha_facturazion_obligaion = models.DateField(null=True, blank=True)
+    fecha_corte_obligacion = models.DateField(null=True, blank=True)
+    fecha_facturacion_obligacion = models.DateField(null=True, blank=True)
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
@@ -158,20 +171,6 @@ class Obligaciones(models.Model):
         while Obligaciones.objects.filter(codigo=codigo).exists():
             codigo = str(random.randint(1000, 9223372036854775807))
         return codigo
-    
-
-class Codeudores(models.Model):
-    nit = models.CharField(max_length=15, primary_key=True)
-    nombres = models.CharField(max_length=70)
-    obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
-    email = models.EmailField(blank=True, null=True)
-    direccion = models.CharField(max_length=80, blank=True, null=True)
-    ciudad = models.CharField(max_length=50, blank=True, null=True)
-    codigo_dane = models.CharField(max_length=10, blank=True, null=True)
-    campos_opcionales = models.JSONField(default=dict, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.nombre} - cliente: {self.cliente}"
     
    
 class Telefono_codeudor(models.Model):
@@ -192,7 +191,7 @@ class Referencias(models.Model):
     campos_opcionales = models.JSONField(default=dict, blank=True, null=True)
      
     def __str__(self):
-        return f"{self.nit} - {self.nombre}"
+        return f"{self.nit} - {self.nombres}"
 
 class ClientesReferencias(models.Model):
     cliente_id = models.ForeignKey(Clientes, on_delete=models.CASCADE)
@@ -203,7 +202,7 @@ class ClientesReferencias(models.Model):
 
 class Telefono_referencia(models.Model):
     numero = models.CharField(max_length=15, primary_key=True)
-    referecia = models.ForeignKey(Referencias, on_delete=models.CASCADE)
+    referencia = models.ForeignKey(Referencias, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0 )
 
     def __str__(self):

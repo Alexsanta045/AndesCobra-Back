@@ -86,7 +86,7 @@ class ClientesSerializer(serializers.ModelSerializer):
 
 class CodeudoresSerializer(serializers.ModelSerializer):
     nit = serializers.CharField()
-    nombre = serializers.CharField()
+    nombres = serializers.CharField()
     cliente = serializers.SerializerMethodField()
     campos_opcionales =serializers.JSONField()
     
