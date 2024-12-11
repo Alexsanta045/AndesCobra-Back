@@ -32,18 +32,14 @@ def cargarObligaciones( id_campaña, archivo):
     try:    
         df = pd.read_excel(archivo)
 
-        print(f'dataframe original ----> {df}')
-
         columnas_obligatorias = ['nit', 'valor_vencido', 'nombre', 'telefono']
         
 
         #Se valida que las filas tengan los campos obligatorios
         filas_incompletas = df[columnas_obligatorias].isna().any(axis=1)
-        print(f'filas incompletas----> {filas_incompletas}')
 
         #se crea un df con las filas que vienen incompletas
         df_filas_eliminadas = df[filas_incompletas]
-        print(f'dataframe filas eliminadas ---> {df_filas_eliminadas}')
         
         df = df[~filas_incompletas]
 
