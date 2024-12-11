@@ -252,8 +252,8 @@ class GestionesView(APIView):
 
 class ClientDataView(APIView):
     
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     def get(self, request):
         obligaciones = Obligaciones.objects.select_related("cliente", "campaña").all()
         serializer = ClientDataSerializer(obligaciones, many=True)
