@@ -43,7 +43,8 @@ class ObligacionesFilter(django_filters.FilterSet):
 
     class Meta:
         model = Obligaciones
-        fields = ['codigo', 'campaña', 'cliente', 'fecha_obligacion', 'fecha_vencimiento_cuota', 'valor_capital', 'valor_mora']
+        fields = ['codigo', 'campaña', 'cliente']
+        # fields = ['codigo', 'campaña', 'cliente', 'fecha_obligacion', 'fecha_vencimiento_cuota', 'valor_capital', 'valor_mora']
 
 class PagosFilter(django_filters.FilterSet):
 
@@ -81,8 +82,8 @@ class CodeudoresFilter(django_filters.FilterSet):
 class AcuerdoPagoFilter(django_filters.FilterSet):
     codigo_obligacion = django_filters.CharFilter(field_name='codigo_obligacion__codigo', lookup_expr='icontains')
     usuario_nombres = django_filters.CharFilter(field_name='usuario__nombres', lookup_expr='icontains')
-
+    estado = django_filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = Acuerdo_pago
-        fields = ['codigo_obligacion','usuario_nombres']
+        fields = ['codigo_obligacion','usuario_nombres', 'estado']

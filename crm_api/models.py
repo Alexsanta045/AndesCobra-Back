@@ -62,137 +62,100 @@ class Chat(models.Model):
         return f"{self.usuario}: '{self.mensaje}'"
     
 
-class Tipo_identificacion(models.Model):
-    nombre = models.CharField(max_length=20)
-    
-    def __str__(self):
-        return self.nombre
-    
-class Pais(models.Model):
-    nombre = models.CharField(max_length=50)
-    
-    def __str__(self):
-        return self.nombre
-    
-    
-class Departamento(models.Model):
-    nombre = models.CharField(max_length=50)
-    pais = models.ForeignKey(Pais, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.nombre
-    
-class Ciudad(models.Model):
-    nombre = models.CharField(max_length=50)
-    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.nombre
-    
-
-class Canales(models.Model):
-    telefonico = models.BooleanField(default=True)
-    visita = models.BooleanField(default=False)
-    whatsapp = models.BooleanField(default=False)
-    email = models.BooleanField(default=False)
-    sms = models.BooleanField(default=False)
-    
-    def __str__(self):
-        return f"telefonico: {self.telefonico}, email: {self.email}, visita: {self.visita}, whatsapp: {self.whatsapp}, sms: {self.sms}"
-
 class Clientes(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
-    tipo_id = models.ForeignKey(Tipo_identificacion, on_delete=models.CASCADE)
-    nombres = models.CharField(max_length=40)
-    apellidos = models.CharField(max_length=30)
-    email = models.CharField(max_length=50)
-    canales_autorizados = models.ForeignKey(Canales, on_delete=models.CASCADE)
-    campos_opcionales = models.JSONField(default=dict, blank=True)
+    nombres = models.CharField(max_length=70)
+    tipo_id = models.CharField(max_length=10, blank=True, null=True)
+    apellidos = models.CharField(max_length=50, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    direccion = models.CharField(max_length=80, blank=True, null=True)
+    ciudad = models.CharField(max_length=50, blank=True, null=True)
+    fecha_nacimiento = models.DateField(blank=True, null=True)
+    fecha_ingreso = models.DateField(blank=True, null=True)
+    actividad_economica = models.CharField(max_length=100, blank=True, null=True)
+    genero = models.CharField(max_length=15, blank=True, null=True)
+    empresa = models.CharField(max_length=60, blank=True, null=True)
+    cantidad_hijos = models.IntegerField(blank=True, null=True)
+    estrato = models.IntegerField(blank=True, null=True)
+    calificacion_cliente = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    tipo_persona = models.CharField(max_length=60, blank=True, null=True)
+    profesion = models.CharField(max_length=60, blank=True, null=True)
+    estado_fraude = models.CharField(max_length=70, blank=True, null=True)
+    calificacion_buro = models.CharField(max_length=60, blank=True, null=True)
+    codigo_dane = models.CharField(max_length=10, blank=True, null=True)
+    campos_opcionales = models.JSONField(default=dict, blank=True, null=True)
     
     def __str__(self):
-        return f"{self.nit}"
+        return self.nit
     
-class Direccion_cliente(models.Model):
-    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    barrio = models.CharField(max_length=50)
-    vereda = models.CharField(max_length=20, blank=True)
-    calle = models.CharField(max_length=15, blank=True)
-    carrera = models.CharField(max_length=10, blank=True)
-    complemento = models.CharField(max_length=70, blank=True)
-    cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"{self.calle} - {self.carrera} - {self.complemento} "
-
-class Codeudores(models.Model):
-    nit = models.CharField(max_length=15, primary_key=True)
-    nombre = models.CharField(max_length=30)
-    cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"{self.nombre} - cliente: {self.cliente}"
-    
-class Direccion_codeudor(models.Model):
-    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    barrio = models.CharField(max_length=50)
-    vereda = models.CharField(max_length=20, blank=True)
-    calle = models.CharField(max_length=15, blank=True)
-    carrera = models.CharField(max_length=10, blank=True)
-    complemento = models.CharField(max_length=70, blank=True)
-    codeudor = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"{self.calle} - {self.carrera} - {self.complemento} "
 
 class Telefono_cliente(models.Model):
-    numero = models.CharField(max_length=10, primary_key=True)
+    numero = models.CharField(max_length=15, primary_key=True)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
-    tipo = models.CharField(max_length=30, blank=True)
-    tipo_celular = models.CharField(max_length=30, blank=True)
-    indicativo = models.CharField(max_length=5, blank=True)
-    extension = models.CharField(max_length=5, blank=True)
-    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
 
     def __str__(self):
         return self.numero
-    
-class Telefono_codeudor(models.Model):
-    numero = models.CharField(max_length=10, primary_key=True)
-    codeudor = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
-    tipo = models.CharField(max_length=30, blank=True)
-    tipo_celular = models.CharField(max_length=30, blank=True)
-    indicativo = models.CharField(max_length=5, blank=True)
-    extension = models.CharField(max_length=5, blank=True)
-    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    rating = models.IntegerField(default=0 )
 
-    def __str__(self):
-        return self.numero
-    
-class Referencias(models.Model):
+
+class Codeudores(models.Model):
     nit = models.CharField(max_length=15, primary_key=True)
-    nombre = models.CharField(max_length=40)
-    
-    def __str__(self):
-        return f"{self.nit} - {self.nombre}"
+    nombres = models.CharField(max_length=70)
+    email = models.EmailField(blank=True, null=True)
+    direccion = models.CharField(max_length=80, blank=True, null=True)
+    ciudad = models.CharField(max_length=50, blank=True, null=True)
+    codigo_dane = models.CharField(max_length=10, blank=True, null=True)
+    campos_opcionales = models.JSONField(default=dict, blank=True, null=True)
 
-class ClientesReferencias(models.Model):
-    cliente_id = models.ForeignKey(Clientes, on_delete=models.CASCADE)
-    referencia_id = models.ForeignKey(Referencias, on_delete=models.CASCADE)
-    
     def __str__(self):
-        return f"cliente: {self.cliente_id} - referencia: {self.referencia_id}"
+        return f"{self.nombres}"
 
 class Obligaciones(models.Model):
     codigo = models.CharField(max_length=25, unique=True, editable=False, primary_key=True)
     codigo_obligacion = models.IntegerField(null=True, blank=True)
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
-    fecha_obligacion = models.DateField()
-    fecha_vencimiento_cuota = models.DateField()
-    valor_capital = models.FloatField(null=True, blank=True)
-    valor_mora = models.FloatField()
+    codeudor = models.ForeignKey(Codeudores, on_delete=models.SET_NULL, null=True, blank=True, related_name='obligaciones')
+    valor_vencido = models.DecimalField(max_digits=11, decimal_places=2)
+    fecha_obligacion = models.DateField(null=True, blank=True)
+    fecha_vencimiento = models.DateField(null=True, blank=True)
+    valor_obligacion = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+    valor_cuota = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    saldo_capital = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+    saldo_total = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+    tipo_producto = models.CharField(max_length=50, null=True, blank=True)
+    dias_mora = models.IntegerField(null=True, blank=True)
+    valor_ultimo_pago = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+    intereses_corriente = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    intereses_mora = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    plazo = models.DateField(null=True, blank=True)
+    calificacion_obligacion = models.CharField(max_length=50, null=True, blank=True)
+    ciclo = models.CharField(max_length=50, null=True, blank=True)
+    etapa_actual_obligacion = models.CharField(max_length=60, null=True, blank=True)
+    fecha_inactivacion = models.DateField(null=True, blank=True)
+    estado_operacional = models.CharField(max_length=60, null=True, blank=True)
+    dias_mora_inicial = models.IntegerField(null=True, blank=True)
+    rango_mora_inicial = models.CharField(max_length=70, null=True, blank=True)
+    rango_mora_actual = models.CharField(max_length=70, null=True, blank=True)
+    fecha_inicio_mora = models.DateField(null=True, blank=True)
+    tasa_interes = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    porc_gastos_cobranza = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    valor_gastos_cobranza = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
+    valor_iva_gastos = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+    valor_otros_conceptos = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+    fecha_castigo = models.DateField(null=True, blank=True)
+    cuotas_vencidas = models.IntegerField(null=True, blank=True)
+    cuotas_pendientes = models.IntegerField(null=True, blank=True)
+    cuotas_pagadas = models.IntegerField(null=True, blank=True)
+    libranza = models.CharField(max_length=70, null=True, blank=True)
+    nit_empresa = models.CharField(max_length=15, null=True, blank=True)
+    sucursal =  models.CharField(max_length=70, null=True, blank=True)
+    regional = models.CharField(max_length=70, null=True, blank=True)
+    puntaje_credito = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    puntaje_comportamiento = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    marca_especial = models.CharField(max_length=65, null=True, blank=True)
+    fecha_corte_obligacion = models.DateField(null=True, blank=True)
+    fecha_facturacion_obligacion = models.DateField(null=True, blank=True)
     campos_opcionales = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
@@ -209,6 +172,42 @@ class Obligaciones(models.Model):
             codigo = str(random.randint(1000, 9223372036854775807))
         return codigo
     
+   
+class Telefono_codeudor(models.Model):
+    numero = models.CharField(max_length=15, primary_key=True)
+    codeudor = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0 )
+
+    def __str__(self):
+        return self.numero
+    
+class Referencias(models.Model):
+    nit = models.CharField(max_length=15, primary_key=True)
+    nombres = models.CharField(max_length=40)
+    email = models.EmailField(blank=True, null=True)
+    direccion = models.CharField(max_length=80, blank=True, null=True)
+    ciudad = models.CharField(max_length=50, blank=True, null=True)
+    codigo_dane = models.CharField(max_length=10, blank=True, null=True)
+    campos_opcionales = models.JSONField(default=dict, blank=True, null=True)
+     
+    def __str__(self):
+        return f"{self.nit} - {self.nombres}"
+
+class ClientesReferencias(models.Model):
+    cliente_id = models.ForeignKey(Clientes, on_delete=models.CASCADE)
+    referencia_id = models.ForeignKey(Referencias, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"cliente: {self.cliente_id} - referencia: {self.referencia_id}"
+
+class Telefono_referencia(models.Model):
+    numero = models.CharField(max_length=15, primary_key=True)
+    referencia = models.ForeignKey(Referencias, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0 )
+
+    def __str__(self):
+        return self.numero
+          
 class Acuerdo_pago(models.Model):
     valor_cuota = models.FloatField() 
     fecha_pago = models.DateField()

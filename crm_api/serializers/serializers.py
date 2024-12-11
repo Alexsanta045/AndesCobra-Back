@@ -2,10 +2,6 @@ from rest_framework import serializers
 from ..models import *
 from rest_framework import serializers
 
-
-
-    
-    
 class CampañasSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -69,51 +65,36 @@ class RolesSerializer(serializers.ModelSerializer):
         model = Roles
         fields = ['id', 'nombre']
 
-
-        
+      
 class CampañasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Campañas
         fields = '__all__'
 
-        
-class CanalesSerializer(serializers.Serializer):
-    telefonico = serializers.BooleanField()
-    visita = serializers.BooleanField()
-    whatsapp = serializers.BooleanField()
-    email = serializers.BooleanField()
-    sms = serializers.BooleanField()
-
-    class Meta:
-        model = Canales
-        fields = '__all__'
 
 
 class ClientesSerializer(serializers.ModelSerializer):
     nit = serializers.CharField()
-    tipo_id = serializers.CharField()
     nombres = serializers.CharField()
-    apellidos = serializers.CharField()
-    email = serializers.CharField()
-    canales_autorizados = CanalesSerializer(read_only=True)
+    campos_opcionales = serializers.JSONField()
 
     class Meta:
         model = Clientes
-        fields = ['nit', 'tipo_id', 'nombres', 'apellidos',
-                'email', 'canales_autorizados', 'campos_opcionales']
+        fields = ['nit', 'tipo_id', 'nombres', 'campos_opcionales']
 
 
 class CodeudoresSerializer(serializers.ModelSerializer):
     nit = serializers.CharField()
-    nombre = serializers.CharField()
+    nombres = serializers.CharField()
     cliente = serializers.SerializerMethodField()
+    campos_opcionales =serializers.JSONField()
     
     class Meta:
         model = Codeudores
         fields = '__all__'
         
     def get_cliente(self, obj):
-        return f"{obj.cliente.nombres} {obj.cliente.apellidos}"
+        return f"{obj.cliente.nombres}"
         
 class ReferenciasSerializer(serializers.ModelSerializer):
     class Meta:
@@ -214,85 +195,24 @@ class ChatSerializer(serializers.ModelSerializer):
         return representation
 
 
-class Tipo_identificacionSerializer(serializers.Serializer):
-    nombre = serializers.CharField()
-    
-    class Meta:
-        model = Tipo_identificacion
-        fields = '__all__'
-
-
-class PaisSerializer(serializers.Serializer):
-    nombre = serializers.CharField()
-    
-    class Meta:
-        model = Pais
-        fields = '__all__'
-
-
-class DepartamentoSerializer(serializers.Serializer):
-    nombre = serializers.CharField()
-    pais = serializers.CharField(source='pais.nombre',)
-
-    class Meta:
-        model = Departamento
-        fields = '__all__'
-
-
-class CiudadSerializer(serializers.Serializer):
-    nombre = serializers.CharField()
-    departamento = serializers.CharField(source='departamento.nombre')
-
-    class Meta:
-        model = Ciudad
-        fields = '__all__'
-
-
 class Telefono_clienteSerializer(serializers.Serializer):
     cliente = serializers.CharField(source='cliente.nombres')
     numero = serializers.CharField()
-    tipo = serializers.CharField()
-    tipo_celular = serializers.CharField()
-    indicativo = serializers.CharField()
-    extension = serializers.CharField()
-    ciudad = serializers.CharField(source='ciudad.nombre')
     rating = serializers.CharField()
-    departamento = serializers.CharField(source='departamento.nombre')
 
     class Meta:
         model = Telefono_cliente
         fields = '__all__'
 
 
-class Direccion_clienteSerializer(serializers.Serializer):
-    cliente = serializers.CharField(source='cliente.nombres')
-    ciudad = serializers.CharField(source='ciudad.nombre')
-    barrio = serializers.CharField()
-    vereda = serializers.CharField()
-    calle = serializers.CharField()
-    carrera = serializers.CharField()
-    complemento = serializers.CharField()
-
-    class Meta:
-        model = Direccion_cliente
-        fields = '__all__'
-
-
-class Direccion_codeudorSerializer(serializers.Serializer):
-    codeudor = serializers.CharField(source='codeudor.nombre')
-    ciudad = serializers.CharField(source='ciudad.nombre')
-    barrio = serializers.CharField()
-    vereda = serializers.CharField()
-    calle = serializers.CharField()
-    carrera = serializers.CharField()
-    complemento = serializers.CharField()
-
-    class Meta:
-        model = Direccion_codeudor
-        fields = '__all__'
-
-
-class Acuerdo_pagoSerializer(serializers.ModelSerializer):
+class Acuerdo_pagoSerializer(serializers.Serializer):
+    valor_cuota = serializers.CharField()
+    fecha_pago = serializers.CharField()
+    codigo_obligacion = serializers.CharField(source='codigo_obligacion.codigo')
+    usuario = serializers.SerializerMethodField()
+    descripcion = serializers.CharField()
+    estado=serializers.CharField() 
+    
     class Meta:
         model = Acuerdo_pago
         fields = '__all__'
@@ -303,18 +223,20 @@ class Acuerdo_pagoSerializer(serializers.ModelSerializer):
 class Telefono_codeudorSerializer(serializers.Serializer):
     codeudor = serializers.CharField(source='codeudor.nombre')
     numero = serializers.CharField()
-    tipo = serializers.CharField()
-    tipo_celular = serializers.CharField()
-    indicativo = serializers.CharField()
-    extension = serializers.CharField()
-    ciudad = serializers.CharField(source='ciudad.nombre')
     rating = serializers.CharField()
-    departamento = serializers.CharField(source='departamento.nombre')
 
     class Meta:
         model = Telefono_codeudor
         fields = '__all__'
     
+class Telefono_referenciaSerializer(serializers.Serializer):
+    referenia = serializers.CharField(source='referencia.nombre')
+    numero = serializers.CharField()
+    rating = serializers.CharField()
+
+    class Meta:
+        model = Telefono_referencia
+        fields = '__all__'
 
 class GestionesFilterSerializer(serializers.ModelSerializer):
     usuario = serializers.CharField()
@@ -331,5 +253,3 @@ class TipoGestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tipo_gestion
         fields = '__all__'
-        
-        
