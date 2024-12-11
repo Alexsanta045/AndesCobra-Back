@@ -118,73 +118,7 @@ class CargarObligacionesViewSet(APIView):
 
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         return cargarObligaciones( id_campaña, archivo)
-        # if not archivo:
-        #     return Response({'error': 'No se ha proporcionado un archivo'}, 
-        #                     status=status.HTTP_400_BAD_REQUEST)
-        # try:
-        #     df = pd.read_excel(archivo)
-        #     print (df)
 
-        #     # Columnas requeridas
-        #     columnas_requeridas = [
-        #         # 'Codigo obligacion',
-        #         'Codigo campaña',
-        #         'Documento cliente',
-        #         'Valor obligacion',
-        #         'Fecha obligacion',
-        #         'Fecha vencimiento',
-        #         'Valor mora' 
-        #     ]
-
-        #     if not all(col in df.columns for col in columnas_requeridas):
-        #             return Response({'error': 'Faltan columnas requeridas en el archivo'}, status=status.HTTP_400_BAD_REQUEST)
-        #     if('Codigo obligacion' in df.columns):
-        #         for _, fila in df.iterrows():
-    
-        #             obligacion = Obligaciones(
-        #                 codigo_obligacion=fila['Codigo obligacion'],
-        #                 campaña_id=fila['Codigo campaña'],
-        #                 cliente_id=fila['Documento cliente'],
-        #                 fecha_obligacion=fila['Fecha obligacion'],
-        #                 fecha_vencimiento_cuota=fila['Fecha vencimiento'],
-        #                 valor_capital=fila['Valor obligacion'],
-        #                 valor_mora=fila['Valor mora']
-        #             )
-
-        #             columnas_adicionales = {
-        #                 col: fila[col]
-        #                 for col in df.columns if col not in columnas_requeridas
-        #             }
-        #             obligacion.campos_opcionales = columnas_adicionales
-        #             obligacion.save()
-        #     else: # si no esta el codigo de la obligacion lo deja vacion
-        #         for _, fila in df.iterrows():
-    
-        #             obligacion = Obligaciones(
-        #                 codigo_obligacion= None,
-        #                 campaña_id=fila['Codigo campaña'],
-        #                 cliente_id=fila['Documento cliente'],
-        #                 fecha_obligacion=fila['Fecha obligacion'],
-        #                 fecha_vencimiento_cuota=fila['Fecha vencimiento'],
-        #                 valor_capital=fila['Valor obligacion'],
-        #                 valor_mora=fila['Valor mora']
-        #             )
-
-        #             columnas_adicionales = {
-        #                 col: fila[col]
-        #                 for col in df.columns if col not in columnas_requeridas
-        #             }
-        #             obligacion.campos_opcionales = columnas_adicionales
-        #             obligacion.save()
-
-        #     return Response({'mensaje': 'Obligaciones guardadas exitosamente'}, status=status.HTTP_201_CREATED)
-        # except Exception as e:
-        #     # import traceback
-        #     # error_trace = traceback.format_exc()
-        #     # print(error_trace)  # Rastreo completo del error en logs
-        #     return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    # -----------------------------------------------------------------------------------------------------
 
 class PagosViewSet(viewsets.ModelViewSet):
     queryset = Pagos.objects.all()

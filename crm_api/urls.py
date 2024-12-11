@@ -20,7 +20,7 @@ router = DefaultRouter()
 
 router.register(r'roles', RolesViewSet, basename='Roles')
 router.register(r'campanas-api', CampañasViewSet, basename='Campañas')
-# router.register(r'clientes', ClientesViewSet, basename='Clientes')
+router.register(r'clientes', ClientesViewSet, basename='Clientes')
 router.register(r'telefono_cliente', Telefono_clienteViewSet, basename='Telefono cliente')
 router.register(r'referencias', ReferenciasViewSet, basename='Referencias')
 router.register(r'telefono_referencias', Telefono_referenciaViewSet, basename='Telefono referencia')
@@ -70,4 +70,5 @@ urlpatterns = [
     path('get-password-change-history/', get_password_change_history, name='get-password-change-history'),  # URL para obtener el historial de contraseñas
     path('gestiones-por-dia/', gestiones_por_dia, name='gestiones_por_dia'),
     path('estadisticas-asesor/', estadisticas_asesor, name='estadisticas_asesor'),
+    path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'),
 ]
