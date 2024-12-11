@@ -15,13 +15,12 @@ from .wolkwox_api.wolkvox_mutear import MutearAPIView
 from .consultasPersonalizadas.passwordChange import *
 from .consultasPersonalizadas.generalStatistics import *
 
-from .obligaciones.crearCliente import ClientesViewSet
 
 router = DefaultRouter()
 
 router.register(r'roles', RolesViewSet, basename='Roles')
 router.register(r'campanas-api', CampañasViewSet, basename='Campañas')
-router.register(r'clientes', ClientesViewSet, basename='Clientes')
+# router.register(r'clientes', ClientesViewSet, basename='Clientes')
 router.register(r'telefono_cliente', Telefono_clienteViewSet, basename='Telefono cliente')
 router.register(r'referencias', ReferenciasViewSet, basename='Referencias')
 router.register(r'telefono_referencias', Telefono_referenciaViewSet, basename='Telefono referencia')
