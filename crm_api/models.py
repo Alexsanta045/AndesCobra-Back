@@ -243,7 +243,7 @@ class ResultadosGestion(models.Model):
 class Tipo_gestion(models.Model):
     nombre = models.CharField(max_length=60)
     def __str__(self):
-        return self.nombre
+        return self.nombre  
 
 class Gestiones(models.Model):
     usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
