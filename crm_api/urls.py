@@ -71,4 +71,5 @@ urlpatterns = [
     path('gestiones-por-dia/', gestiones_por_dia, name='gestiones_por_dia'),
     path('estadisticas-asesor/', estadisticas_asesor, name='estadisticas_asesor'),
     path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'),
+    
 ]

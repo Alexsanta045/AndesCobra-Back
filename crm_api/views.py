@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import pandas as pd
 
+
 from  .obligaciones.cargarObligaciones import cargarObligaciones
 from .filters import *
 from .models import *
@@ -107,16 +108,12 @@ class ObligacionesViewSet(viewsets.ModelViewSet):
 
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
-    # -----------------------------------------------------------------------------------------------------
+
 class CargarObligacionesViewSet(APIView):
     def post(self, request, *args, **kwargs):
         archivo = request.FILES.get('archivo')
         id_campaña = request.data.get('id_campaign')
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
-        print(id_campaña)
-
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         return cargarObligaciones( id_campaña, archivo)
 
 
@@ -262,3 +259,5 @@ class TipoGestionViewSet(viewsets.ModelViewSet):
   
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    
+

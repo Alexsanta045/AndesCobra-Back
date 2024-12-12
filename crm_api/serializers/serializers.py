@@ -84,10 +84,6 @@ class ClientesSerializer(serializers.ModelSerializer):
 
 
 class CodeudoresSerializer(serializers.ModelSerializer):
-    nit = serializers.CharField()
-    nombres = serializers.CharField()
-    cliente = serializers.SerializerMethodField()
-    campos_opcionales =serializers.JSONField()
     
     class Meta:
         model = Codeudores
@@ -195,11 +191,7 @@ class ChatSerializer(serializers.ModelSerializer):
         return representation
 
 
-class Telefono_clienteSerializer(serializers.Serializer):
-    cliente = serializers.CharField(source='cliente.nombres')
-    numero = serializers.CharField()
-    rating = serializers.CharField()
-
+class Telefono_clienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Telefono_cliente
         fields = '__all__'
