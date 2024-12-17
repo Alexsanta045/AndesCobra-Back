@@ -9,12 +9,13 @@ from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
 from .views import *
-from .wolkwox_api.wolkvox_colgar import ColgarAPIView
-from .wolkwox_api.wolkvox_dial import DialWolkvoxAPIView
-from .wolkwox_api.wolkvox_mutear import MutearAPIView
+from .wolkvox_api.wolkvox_colgar import ColgarAPIView
+from .wolkvox_api.wolkvox_dial import DialWolkvoxAPIView
+from .wolkvox_api.wolkvox_mutear import MutearAPIView
 from .consultasPersonalizadas.passwordChange import *
 from .consultasPersonalizadas.generalStatistics import *
-
+from .wolkvox_api.wolkvox_crear_tipificacion import WolkvoxCrearTipificacion
+ 
 
 router = DefaultRouter()
 
@@ -71,5 +72,6 @@ urlpatterns = [
     path('gestiones-por-dia/', gestiones_por_dia, name='gestiones_por_dia'),
     path('estadisticas-asesor/', estadisticas_asesor, name='estadisticas_asesor'),
     path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'),
+    path('crear_tipificacion/', WolkvoxCrearTipificacion.as_view(), name='crear_tipificaion'),
     
 ]

@@ -80,7 +80,7 @@ class ClientesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Clientes
-        fields = ['nit', 'tipo_id', 'nombres', 'campos_opcionales']
+        fields = '__all__'
 
 
 class CodeudoresSerializer(serializers.ModelSerializer):
@@ -197,20 +197,12 @@ class Telefono_clienteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class Acuerdo_pagoSerializer(serializers.Serializer):
-    valor_cuota = serializers.CharField()
-    fecha_pago = serializers.CharField()
-    codigo_obligacion = serializers.CharField(source='codigo_obligacion.codigo')
-    usuario = serializers.SerializerMethodField()
-    descripcion = serializers.CharField()
-    estado=serializers.CharField() 
+class Acuerdo_pagoSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Acuerdo_pago
         fields = '__all__'
         
-    def get_usuario(self, obj):
-        return f"{obj.usuario.username}"
         
 class Telefono_codeudorSerializer(serializers.Serializer):
     codeudor = serializers.CharField(source='codeudor.nombre')

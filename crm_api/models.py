@@ -209,7 +209,7 @@ class Telefono_referencia(models.Model):
         return self.numero
           
 class Acuerdo_pago(models.Model):
-    valor_cuota = models.FloatField() 
+    valor_cuota = models.FloatField()
     fecha_pago = models.DateField()
     codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
     estado = models.CharField(default="Vigente")
@@ -230,8 +230,8 @@ class Pagos(models.Model):
         return f"{self.obligacion} - {self.valor} - {self.fecha}"
 
 class ResultadosGestion(models.Model):
+    codigo = models.CharField(max_length=8)
     nombre = models.CharField(max_length=60)
-    descripcion = models.TextField(max_length=200, blank=True)
     efectividad = models.BooleanField(default=False, blank=True)
     estado = models.BooleanField(default=False)
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
