@@ -62,5 +62,4 @@ urlpatterns = [
     path('campanas-por-usuario/', CampañasPorUsuario.as_view(), name='campanas-por-usuario'),  
     path('borrarCampañas/', CampañaUsuarioDeleteView.as_view(), name='borrarCampañas'), 
     path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'), 
-
 ]
