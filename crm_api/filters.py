@@ -54,11 +54,11 @@ class PagosFilter(django_filters.FilterSet):
 
 
 class ResultadosGestionFilter(django_filters.FilterSet):
-    nombre = django_filters.CharFilter(lookup_expr='icontains')
+    campaña = django_filters.CharFilter()
 
     class Meta:
         model = ResultadosGestion
-        fields = ['nombre']
+        fields = ['campaña']
 
 
 class GestionesFilter(django_filters.FilterSet):
