@@ -320,7 +320,7 @@ class InteraccionCampañasView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
     
     
-class ResultadosGestionView(APIView):
+class ResultadosGestionActivosView(APIView):
     
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
