@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from rest_framework import status
 from .models import CustomUser
-from .serializers import UserSerializer
+from crm_api.serializers.serializers import UserSerializer
 from functools import wraps
 from django.http import HttpResponseForbidden
 from django.contrib.auth import get_user_model
@@ -25,13 +25,19 @@ def login(request):
         # Si no se encuentra el usuario, retorna un mensaje personalizado de error
         return Response({"error": "Usuario Invalido"}, status=status.HTTP_400_BAD_REQUEST)
 
-
     # Verifica si la contraseña es correcta
     if not user.check_password(password):
         return Response({"error": "Contraseña Incorrecta"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Genera o recupera el token de autenticación
-    token, _ = Token.objects.get_or_create(user=user)
+    if user.is_active:
+        token, _ = Token.objects.get_or_create(user=user)
+    else:
+            return Response({"error": "Usuario desactivado"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # Actualiza el estado del usuario a activo
+    user.estado = True
+    user.save()
 
     # Serializa el usuario
     serializer = UserSerializer(instance=user)
@@ -57,7 +63,7 @@ def register(request):
                 
         except Exception as e:
             return Response({
-                'error': 'Error creating user',
+                'error': 'Error al crear usuario',
                 'detail': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
 
@@ -74,12 +80,11 @@ def role_required(roles):
             user_role = request.user.role.nombre if request.user.role else None
             # Verifica si el rol del usuario es uno de los roles permitidos
             if user_role not in roles:
-                return HttpResponseForbidden("You do not have permission to access this resource.")
+                return HttpResponseForbidden("No tienes permiso para acceder a este recurso..")
             
             return func(request, *args, **kwargs)
         return _wrapped_view
     return decorator
-
 
 @api_view(['GET'])
 @role_required(['admin'])  # Solo los usuarios con rol 'admin' pueden acceder
@@ -91,7 +96,6 @@ def admin_dashboard(request):
 def advisor_leader_dashboard(request):
     return Response({"message": "Bienvenido, Advisor o Leader!"}, status=status.HTTP_200_OK)
 
-
 User = get_user_model() #Para obtener el modelo del usuario actualmente
 
 @api_view(['POST'])
@@ -102,9 +106,15 @@ def logout(request):
         token_key = auth_header.split(' ')[1]  # Obtener el token
         try:
             token = Token.objects.get(key=token_key)  # Buscar el token en la base de datos
+            user = token.user  # Obtener el usuario asociado al token
+
+            # Actualiza el estado del usuario a inactivo
+            user.estado = False
+            user.save()
+
             token.delete()  # Eliminar el token para cerrar la sesión
             return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
         except Token.DoesNotExist:
-            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Token Invalido"}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return Response({"error": "Token not provided"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"error": "Token no proporcionado"}, status=status.HTTP_401_UNAUTHORIZED)
