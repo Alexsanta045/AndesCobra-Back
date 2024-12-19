@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from rest_framework import status
 from .models import CustomUser
-from .serializers import UserSerializer
+from crm_api.serializers.serializers import UserSerializer
 from functools import wraps
 from django.http import HttpResponseForbidden
 from django.contrib.auth import get_user_model
