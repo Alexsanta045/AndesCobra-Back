@@ -73,5 +73,6 @@ urlpatterns = [
     path('estadisticas-asesor/', estadisticas_asesor, name='estadisticas_asesor'),
     path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'),
     path('crear_tipificacion/', WolkvoxCrearTipificacion.as_view(), name='crear_tipificaion'),
+    path('cargar-gestiones/', CargarGestionesViewSet.as_view(), name='cargar-gestiones'),
     
 ]
