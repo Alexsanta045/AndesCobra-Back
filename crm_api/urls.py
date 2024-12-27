@@ -9,18 +9,20 @@ from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
 from .views import *
-from .wolkwox_api.wolkvox_colgar import ColgarAPIView
-from .wolkwox_api.wolkvox_dial import DialWolkvoxAPIView
-from .wolkwox_api.wolkvox_mutear import MutearAPIView
+from .wolkvox_api.wolkvox_colgar import ColgarAPIView
+from .wolkvox_api.wolkvox_dial import DialWolkvoxAPIView
+from .wolkvox_api.wolkvox_mutear import MutearAPIView
 from .consultasPersonalizadas.passwordChange import *
 from .consultasPersonalizadas.generalStatistics import *
-
+from .wolkvox_api.wolkvox_crear_tipificacion import WolkvoxCrearTipificacion
+from .wolkvox_api.wolkvox_editar_tipificacion import WolkvoxEditarTipificacion
+ 
 
 router = DefaultRouter()
 
 router.register(r'roles', RolesViewSet, basename='Roles')
 router.register(r'campanas-api', CampañasViewSet, basename='Campañas')
-# router.register(r'clientes', ClientesViewSet, basename='Clientes')
+router.register(r'clientes', ClientesViewSet, basename='Clientes')
 router.register(r'telefono_cliente', Telefono_clienteViewSet, basename='Telefono cliente')
 router.register(r'referencias', ReferenciasViewSet, basename='Referencias')
 router.register(r'telefono_referencias', Telefono_referenciaViewSet, basename='Telefono referencia')
@@ -57,10 +59,10 @@ urlpatterns = [
     path('cliente_obligaciones/', ClientesObligaciones.as_view(), name='cliente_obligaciones'),
     path('colletion-management/', CollectionAndManagementView.as_view(), name='colletion-management'),
     path('campanas/interacciones/', InteraccionCampañasView.as_view(), name='get_interacciones_por_fecha'),
-    path('resultados_gestion/campaña/', ResultadosGestionView.as_view(), name='resultados_gestion_por_campaña'),
+    path('resultados_gestion_activos/campaña/', ResultadosGestionActivosView.as_view(), name='resultados_gestion_por_campaña'),
     path('campanas-por-usuario/', CampañasPorUsuario.as_view(), name='campanas-por-usuario'),  
-    path('borrarCampañas/', CampañaUsuarioDeleteView.as_view(), name='borrarCampañas'),  
-    path('dial/', DialWolkvoxAPIView.as_view(), name='dial-wolkvox'),  
+    path('borrarCampañas/', CampañaUsuarioDeleteView.as_view(), name='borrarCampañas'),
+    path('dial/', DialWolkvoxAPIView.as_view(), name='dial-wolkvox'),
     path('colgar/', ColgarAPIView.as_view(), name='colgar'),
     path('mutear/', MutearAPIView.as_view(), name='mutear'),
     path('change-password/', change_user_password, name='change_password'),
@@ -70,4 +72,8 @@ urlpatterns = [
     path('get-password-change-history/', get_password_change_history, name='get-password-change-history'),  # URL para obtener el historial de contraseñas
     path('gestiones-por-dia/', gestiones_por_dia, name='gestiones_por_dia'),
     path('estadisticas-asesor/', estadisticas_asesor, name='estadisticas_asesor'),
+    path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'),
+    path('crear_tipificacion/', WolkvoxCrearTipificacion.as_view(), name='crear_tipificaion'),
+    path('editar_tipificacion/', WolkvoxEditarTipificacion.as_view(), name='editar_tipificaion'),
+    
 ]

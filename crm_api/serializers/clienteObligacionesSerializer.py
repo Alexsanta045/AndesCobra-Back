@@ -2,13 +2,14 @@ from rest_framework import serializers
 from django.db.models import Sum
 from datetime import datetime
 from ..models import Clientes, Obligaciones, Telefono_cliente
-# from .serializers import CanalesSerializer
+from ..serializers.serializers import Telefono_clienteSerializer
+
 
 class ClienteObligacionesSerializer(serializers.ModelSerializer):
     nit = serializers.CharField()
     nombres = serializers.CharField()
     email = serializers.CharField()
-    numero_celular = serializers.SerializerMethodField()
+    celulares = serializers.SerializerMethodField()
     total_obligaciones = serializers.SerializerMethodField()
     total_valor_capital = serializers.SerializerMethodField()
     total_valor_mora = serializers.SerializerMethodField()
@@ -16,17 +17,34 @@ class ClienteObligacionesSerializer(serializers.ModelSerializer):
     total_intereses = serializers.SerializerMethodField()
     total_a_pagar = serializers.SerializerMethodField()
     
+    
     class Meta:
         model = Clientes
         fields = '__all__'
         
-    def get_numero_celular(self, obj):
+    def get_celulares(self, obj):
         try:
-            telefono = Telefono_cliente.objects.filter(cliente=obj).first()
-            return telefono.numero
-        except Telefono_cliente.DoesNotExist:
+            # Obtener todos los números de teléfono asociados al cliente
+            telefonos = Telefono_cliente.objects.filter(cliente=obj).order_by('-rating')
+
+            # Si existen números, devolver una lista de diccionarios con los valores deseados
+            if telefonos.exists():
+                result = []
+                for telefono in telefonos:
+                    # Agregar un objeto o diccionario con el número y otros valores
+                    telefono_info = {
+                        "numero": telefono.numero,
+                        "rating": telefono.rating,
+                    }
+                    result.append(telefono_info)
+                return result  # Lista de diccionarios con los valores
+
+            # Si no hay números, retornar None
             return None
         
+        except Telefono_cliente.DoesNotExist:
+            return None
+
     def get_total_obligaciones(self, obj):
         obligaciones = Obligaciones.objects.filter(cliente=obj)
         return obligaciones.count()
