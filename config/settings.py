@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_filters',
     "corsheaders",
     "rest_framework",
+    'drf_spectacular',
     'rest_framework.authtoken',
     "crm_api",
 ]
@@ -154,7 +155,23 @@ REST_FRAMEWORK = {
     
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        
+        
     ),
+}
+
+REST_FRAMEWORK = {
+    # YOUR SETTINGS
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Api de crm',
+    'DESCRIPTION': 'Bienvenido a la documentación oficial de la API de CRM. ',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
 
 
