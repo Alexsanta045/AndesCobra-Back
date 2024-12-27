@@ -15,6 +15,7 @@ from .wolkvox_api.wolkvox_mutear import MutearAPIView
 from .consultasPersonalizadas.passwordChange import *
 from .consultasPersonalizadas.generalStatistics import *
 from .wolkvox_api.wolkvox_crear_tipificacion import WolkvoxCrearTipificacion
+from .wolkvox_api.wolkvox_editar_tipificacion import WolkvoxEditarTipificacion
  
 
 router = DefaultRouter()
@@ -58,10 +59,10 @@ urlpatterns = [
     path('cliente_obligaciones/', ClientesObligaciones.as_view(), name='cliente_obligaciones'),
     path('colletion-management/', CollectionAndManagementView.as_view(), name='colletion-management'),
     path('campanas/interacciones/', InteraccionCampañasView.as_view(), name='get_interacciones_por_fecha'),
-    path('resultados_gestion/campaña/', ResultadosGestionView.as_view(), name='resultados_gestion_por_campaña'),
+    path('resultados_gestion_activos/campaña/', ResultadosGestionActivosView.as_view(), name='resultados_gestion_por_campaña'),
     path('campanas-por-usuario/', CampañasPorUsuario.as_view(), name='campanas-por-usuario'),  
-    path('borrarCampañas/', CampañaUsuarioDeleteView.as_view(), name='borrarCampañas'),  
-    path('dial/', DialWolkvoxAPIView.as_view(), name='dial-wolkvox'),  
+    path('borrarCampañas/', CampañaUsuarioDeleteView.as_view(), name='borrarCampañas'),
+    path('dial/', DialWolkvoxAPIView.as_view(), name='dial-wolkvox'),
     path('colgar/', ColgarAPIView.as_view(), name='colgar'),
     path('mutear/', MutearAPIView.as_view(), name='mutear'),
     path('change-password/', change_user_password, name='change_password'),
@@ -74,5 +75,6 @@ urlpatterns = [
     path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'),
     path('crear_tipificacion/', WolkvoxCrearTipificacion.as_view(), name='crear_tipificaion'),
     path('cargar-gestiones/', CargarGestionesViewSet.as_view(), name='cargar-gestiones'),
+    path('editar_tipificacion/', WolkvoxEditarTipificacion.as_view(), name='editar_tipificaion'),
     
 ]
