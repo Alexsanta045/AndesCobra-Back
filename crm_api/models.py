@@ -112,21 +112,21 @@ class Codeudores(models.Model):
 
 class Obligaciones(models.Model):
     codigo = models.CharField(max_length=25, unique=True, editable=False, primary_key=True)
-    codigo_obligacion = models.IntegerField(null=True, blank=True)
+    codigo_obligacion = models.CharField(max_length=15, null=True, blank=True)
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     codeudor = models.ForeignKey(Codeudores, on_delete=models.SET_NULL, null=True, blank=True, related_name='obligaciones')
-    valor_vencido = models.DecimalField(max_digits=11, decimal_places=2)
+    valor_vencido = models.DecimalField(max_digits=15, decimal_places=2)
     fecha_obligacion = models.DateField(null=True, blank=True)
     fecha_vencimiento = models.DateField(null=True, blank=True)
-    valor_obligacion = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
-    valor_cuota = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    saldo_capital = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
-    saldo_total = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+    valor_obligacion = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    valor_cuota = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    saldo_capital = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    saldo_total = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
     tipo_producto = models.CharField(max_length=50, null=True, blank=True)
     dias_mora = models.IntegerField(null=True, blank=True)
-    valor_ultimo_pago = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
-    intereses_corriente = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    valor_ultimo_pago = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    intereses_corriente = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
     intereses_mora = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     plazo = models.DateField(null=True, blank=True)
     calificacion_obligacion = models.CharField(max_length=50, null=True, blank=True)
@@ -141,7 +141,7 @@ class Obligaciones(models.Model):
     tasa_interes = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     porc_gastos_cobranza = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     valor_gastos_cobranza = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
-    valor_iva_gastos = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+    valor_iva_gastos = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     valor_otros_conceptos = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     fecha_castigo = models.DateField(null=True, blank=True)
     cuotas_vencidas = models.IntegerField(null=True, blank=True)
@@ -209,7 +209,7 @@ class Telefono_referencia(models.Model):
         return self.numero
           
 class Acuerdo_pago(models.Model):
-    valor_cuota = models.FloatField() 
+    valor_cuota = models.FloatField()
     fecha_pago = models.DateField()
     codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
     estado = models.CharField(default="Vigente")
@@ -230,8 +230,8 @@ class Pagos(models.Model):
         return f"{self.obligacion} - {self.valor} - {self.fecha}"
 
 class ResultadosGestion(models.Model):
+    codigo = models.CharField(max_length=8)
     nombre = models.CharField(max_length=60)
-    descripcion = models.TextField(max_length=200, blank=True)
     efectividad = models.BooleanField(default=False, blank=True)
     estado = models.BooleanField(default=False)
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
@@ -242,7 +242,7 @@ class ResultadosGestion(models.Model):
 class Tipo_gestion(models.Model):
     nombre = models.CharField(max_length=60)
     def __str__(self):
-        return self.nombre
+        return self.nombre  
 
 class Gestiones(models.Model):
     usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

@@ -261,7 +261,6 @@ class ClientDataView(APIView):
 
 
 class ClientesObligaciones(APIView):
-    
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
     def get(self, request):
@@ -275,6 +274,8 @@ class ClientesObligaciones(APIView):
         cliente_data = Clientes.objects.filter(nit=cliente)
         serializer = ClienteObligacionesSerializer(cliente_data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
 class CollectionAndManagementView(APIView):
     def get(self, request, *args, **kwargs):
         campañas = Campañas.objects.all()
@@ -319,7 +320,7 @@ class InteraccionCampañasView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
     
     
-class ResultadosGestionView(APIView):
+class ResultadosGestionActivosView(APIView):
     
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -405,3 +406,4 @@ class CampañasView(APIView):
         
         except Campañas.DoesNotExist:
             return Response({"error": "No se encontro esta campaña"}, status=status.HTTP_404_NOT_FOUND)
+
