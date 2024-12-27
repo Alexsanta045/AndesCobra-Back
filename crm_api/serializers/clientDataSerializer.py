@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ..models import *
 from collections import defaultdict
+from datetime import datetime
 
 
 class ClientDataSerializer(serializers.Serializer):
@@ -28,7 +29,7 @@ class ClientDataSerializer(serializers.Serializer):
 
     def get_totalCartera(self, obj):
         # Calcula la suma del valor de la mora relacionada con el cliente
-        total_mora = Obligaciones.objects.filter(cliente=obj.cliente).aggregate(total=models.Sum("valor_mora"))["total"] or 0
+        total_mora = Obligaciones.objects.filter(cliente=obj.cliente).aggregate(total=models.Sum("intereses_mora"))["total"] or 0
         # Obtiene el monto total de pagos gestionados que han sido aplicados a esta cartera
         total_pagos = self.get_montoGestAnt(obj)
         # Asegurarse de que el valor no sea negativo
@@ -37,7 +38,7 @@ class ClientDataSerializer(serializers.Serializer):
 
     def get_totalCapital(self, obj):
         # Calcula el capital total después de descontar los pagos realizados
-        total_capital = Obligaciones.objects.filter(cliente=obj.cliente).aggregate(total=models.Sum("valor_capital"))["total"] or 0
+        total_capital = Obligaciones.objects.filter(cliente=obj.cliente).aggregate(total=models.Sum("saldo_capital"))["total"] or 0
         total_pagos = self.get_montoGestAnt(obj)
         # Asegurarse de que el valor no sea negativo
         total_capital_final = total_capital - total_pagos
@@ -51,7 +52,10 @@ class ClientDataSerializer(serializers.Serializer):
 
     def get_diasMora(self, obj):
         # Calcula los días de mora entre la fecha de vencimiento de la cuota y la fecha de obligación
-        return (obj.fecha_vencimiento_cuota - obj.fecha_obligacion).days
+        # Asumir que 'fecha_vencimiento' es la correcta en 'Obligaciones'
+        if obj.fecha_vencimiento:
+            return (datetime.now().date() - obj.fecha_vencimiento).days
+        return 0
 
     def get_fechaUltPago(self, obj):
         # Obtiene la fecha del último pago realizado en la obligación
