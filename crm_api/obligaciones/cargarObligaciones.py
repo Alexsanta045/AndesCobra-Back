@@ -55,6 +55,7 @@ def cargarObligaciones(id_campaña, archivo):
         df = df.drop(filas_invalidas)
 
         # Ingresar los datos
+        df['fecha_vencimiento'] = df['fecha_vencimiento'].apply(lambda x: x.date() if not pd.isnull(x) else None)
         ingresar_datos(df, id_campaña)
 
         return Response({'mensaje': 'Obligaciones guardadas exitosamente'}, status=status.HTTP_201_CREATED)
