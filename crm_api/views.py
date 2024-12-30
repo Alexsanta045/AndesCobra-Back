@@ -1,20 +1,16 @@
 
-from rest_framework import status
-import requests
 from crm_api.serializers.serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import  viewsets
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-import pandas as pd
 
 
-from  .obligaciones.cargarObligaciones import cargarObligaciones
+
+from .obligaciones.cargarObligaciones import cargarObligaciones
+from .gestionesMasivas.cargarGestiones import cargarGestiones
 from .filters import *
 from .models import *
 from .serializers import *
@@ -58,24 +54,6 @@ class ClientesViewSet(viewsets.ModelViewSet):
 #     # authentication_classes = [TokenAuthentication]
 #     # permission_classes = [IsAuthenticated]
 
-#     def crear_cliente_si_no_existe(self, datos_cliente):
-#         try:
-#             cliente, creado = Clientes.objects.get_or_create(
-#                 documento=datos_cliente['Documento cliente'],
-#                 defaults={
-#                     # Aquí agregas los campos para nuevos clientes
-#                     'nit': datos_cliente.get('Documento cliente'),
-#                     'nombres': datos_cliente.get('Nombre', ''),
-#                     'email': datos_cliente.get('Apellido', ''),
-#                     # Agrega más campos según tu modelo
-#                 }
-#             )
-#             return cliente
-#         except Exception as e:
-#             # Manejo de errores si falla la creación
-#             print(f"Error creando cliente: {e}")
-#             return None
-
 
 class CodeudoresViewSet(viewsets.ModelViewSet):
     queryset = Codeudores.objects.all()
@@ -115,6 +93,13 @@ class CargarObligacionesViewSet(APIView):
         id_campaña = request.data.get('id_campaign')
 
         return cargarObligaciones( id_campaña, archivo)
+
+class CargarGestionesViewSet(APIView):
+    def post(self, request, *args, **kwargs):
+        archivo = request.FILES.get('archivo')
+        id_campaña = request.data.get('id_campaign')
+        return cargarGestiones(id_campaña, archivo)
+
 
 
 class PagosViewSet(viewsets.ModelViewSet):

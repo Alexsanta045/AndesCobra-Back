@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 def validar_fila(fila):
     # Lista de motivos para una fila específica
@@ -17,9 +18,11 @@ def validar_fila(fila):
 
     # Validar columna fecha_vencimiento
     if pd.notna(fila['fecha_vencimiento']):
-        if not isinstance(fila['fecha_vencimiento'], str):
+        if not isinstance(fila['fecha_vencimiento'], pd.Timestamp):
             motivos.append("Fecha de vencimiento inválida")
+        
 
+            
     # Validar columna valor_obligacion 
     if pd.notna(fila['valor_obligacion']):
         try:
@@ -371,19 +374,30 @@ def validar_fila(fila):
             motivos.append("Calificación de buró inválida")
 
     # Validar columnas de teléfonos (telefono_1 a telefono_10)
+    
     if not fila['telefono_1']:
         motivos.append("El telefono 1 del cliente es requerido")
-    elif not isinstance(fila['telefono_1'], (int, str)) or len(str(fila['telefono_1'])) > 10 or not str(fila['telefono_1']).isdigit():
+    elif not isinstance(fila['telefono_1'], (int, str)) or len(str(fila['telefono_1']).strip()) > 10 or not str(fila['telefono_1']).strip().isdigit():
         motivos.append("telefono 1 invalido")
 
     for i in range(2, 11):
-        telefono = fila.get(f'telefono_{i}')
+        if pd.notna(fila[f'telefono_{i}']):
+            telefono = int(fila[f'telefono_{i}'])
+            print('-----------------------------------------------------------')
+            print(f'telefono ---> {telefono}')
+            print('-----------------------------------------------------------')
+
+        if pd.notna(fila[f'telefono_{i}']) and telefono:  
+            if not isinstance(telefono, int) or len(str(telefono)) > 10 :
+                motivos.append(f"Teléfono {i} inválido {telefono}")
+            # elif len(str(telefono).strip()) > 10 or not (str(telefono).strip()).isdigit():
+            #     motivos.append(f"Teléfono {i} inválido")
         
-        if pd.notna(telefono) and telefono:  
-            if not isinstance(telefono, (int, str)):
-                motivos.append(f"Teléfono {i} inválido")
-            elif len(str(telefono)) > 10 or not str(telefono).isdigit():
-                motivos.append(f"Teléfono {i} inválido")
+        # if pd.notna(telefono) and telefono:  
+        #     if not isinstance(telefono, (int, str)) or len(str(telefono).strip()) > 10 or not (str(telefono).strip()).isdigit() :
+        #         motivos.append(f"Teléfono {i} inválido")
+        #     # elif len(str(telefono).strip()) > 10 or not (str(telefono).strip()).isdigit():
+        #     #     motivos.append(f"Teléfono {i} inválido")
 
     # Validar columna direccion
     if pd.notna(fila['direccion']):

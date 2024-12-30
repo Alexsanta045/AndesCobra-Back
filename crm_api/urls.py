@@ -16,6 +16,7 @@ from .consultasPersonalizadas.passwordChange import *
 from .consultasPersonalizadas.generalStatistics import *
 from .wolkvox_api.wolkvox_crear_tipificacion import WolkvoxCrearTipificacion
 from .wolkvox_api.wolkvox_editar_tipificacion import WolkvoxEditarTipificacion
+from .wolkvox_api.wolkvox_tipificar import WolkvoxTipificar
  
 
 router = DefaultRouter()
@@ -74,6 +75,7 @@ urlpatterns = [
     path('estadisticas-asesor/', estadisticas_asesor, name='estadisticas_asesor'),
     path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'),
     path('crear_tipificacion/', WolkvoxCrearTipificacion.as_view(), name='crear_tipificaion'),
+    path('cargar-gestiones/', CargarGestionesViewSet.as_view(), name='cargar-gestiones'),
     path('editar_tipificacion/', WolkvoxEditarTipificacion.as_view(), name='editar_tipificaion'),
-    
+    path('tipificarWV/', WolkvoxTipificar.as_view(), name='tipificar'),
 ]
