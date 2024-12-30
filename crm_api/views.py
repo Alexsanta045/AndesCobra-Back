@@ -1,17 +1,12 @@
 
-from rest_framework import status
-import requests
 from crm_api.serializers.serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import  viewsets
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-import pandas as pd
+
 
 
 from  .obligaciones.cargarObligaciones import cargarObligaciones

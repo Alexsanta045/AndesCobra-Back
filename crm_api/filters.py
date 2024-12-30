@@ -58,7 +58,7 @@ class ResultadosGestionFilter(django_filters.FilterSet):
 
     class Meta:
         model = ResultadosGestion
-        fields = ['campaña']
+        fields = ['campaña']  
 
 
 class GestionesFilter(django_filters.FilterSet):

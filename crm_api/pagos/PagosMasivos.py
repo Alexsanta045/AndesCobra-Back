@@ -34,23 +34,24 @@ class PagosMasivos(APIView):
             valor = valor_pagado
             
             try:
-                obligacion = Obligaciones.objects.get(codigo=row['Codigo'])
+                obligacion = Obligaciones.objects.get(codigo_obligacion=row['Codigo'])
 
                  #se aplica el pago primero en la mora
-                if obligacion.valor_mora > 0:
-                    if valor_pagado >= obligacion.valor_mora:
-                        valor_pagado -= obligacion.valor_mora
-                        obligacion.valor_mora = 0
+                if obligacion.valor_vencido > 0:
+                    if valor_pagado >= obligacion.valor_vencido:
+                        valor_pagado -= obligacion.valor_vencido
+                        obligacion.valor_vencido = 0
                     else: 
-                        obligacion.valor_mora -= valor_pagado
+                        obligacion.valor_vencido -= valor_pagado
                         valor_pagado = 0
                         
                 if valor_pagado <= 0:
                     obligacion.save()
 
                 try:
-                    obligacion.valor_capital -= valor_pagado
-                    obligacion.save()
+                    
+                    # obligacion.valor_capital -= valor_pagado
+                    # obligacion.save()
                     
                     pago = Pagos(
                         obligacion=obligacion,
@@ -67,31 +68,31 @@ class PagosMasivos(APIView):
                 cliente = Clientes.objects.get(nit=row['Codigo'])
                 if cliente:
                     while valor_pagado > 0:
-                        # se obtienen todas las obligaciones del cliente con valor_mora superior a $0
-                        obligaciones = Obligaciones.objects.filter(cliente_id=cliente).exclude(valor_mora=0)
-                        obligacion_menor = obligaciones[0].valor_mora
+                        # se obtienen todas las obligaciones del cliente con valor_vencido superior a $0
+                        obligaciones = Obligaciones.objects.filter(cliente_id=cliente).exclude(valor_vencido=0)
+                        obligacion_menor = obligaciones[0].valor_vencido
                         # si el cliente tiene dos o mas obligaciones
                         for obligacion in obligaciones:
-                            if obligacion.valor_mora <= obligacion_menor:
-                                obligacion_menor = obligacion.valor_mora
+                            if obligacion.valor_vencido <= obligacion_menor:
+                                obligacion_menor = obligacion.valor_vencido
                                 
-                        obligacion = obligaciones.get(cliente_id=cliente, valor_mora=obligacion_menor)
+                        obligacion = obligaciones.get(cliente_id=cliente, valor_vencido=obligacion_menor)
     
                         #se aplica el pago primero en la mora
-                        if obligacion.valor_mora > 0:
-                            if valor_pagado >= obligacion.valor_mora:
-                                valor_pagado -= obligacion.valor_mora
-                                obligacion.valor_mora = 0
+                        if obligacion.valor_vencido > 0:
+                            if valor_pagado >= obligacion.valor_vencido:
+                                valor_pagado -= obligacion.valor_vencido
+                                obligacion.valor_vencido = 0
                             else: 
-                                obligacion.valor_mora -= valor_pagado
+                                obligacion.valor_vencido -= valor_pagado
                                 valor_pagado = 0
                                 
                         if valor_pagado <= 0:
                             obligacion.save()
 
                         try:
-                            obligacion.valor_capital -= valor_pagado
-                            obligacion.save()
+                            # obligacion.valor_capital -= valor_pagado
+                            # obligacion.save()
                             
                             pago = Pagos(
                                 obligacion=obligacion,
