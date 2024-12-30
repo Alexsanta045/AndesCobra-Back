@@ -375,8 +375,6 @@ class CampañasPorUsuario(APIView):
         
 class CampañaUsuarioDeleteView(APIView):
     
-
-
     def delete(self, request, *args, **kwargs):
         campañas=request.query_params.get('id_campaña')
         usuarios=request.query_params.get('id_usuario')
