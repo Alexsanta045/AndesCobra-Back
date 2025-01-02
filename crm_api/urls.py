@@ -39,6 +39,7 @@ router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUs
 router.register(r'CustomUser', CustomUserViewSet, basename='custom-user') 
 router.register(r'tipo_gestion', TipoGestionViewSet, basename='tipo_gestion') 
 router.register(r'historial_gestiones', HistorialGestionesViewSet, basename='historial_gestiones')
+# router.register(r'recaudo_campaña',RecaudoCampañaViewSet, basename='recaudo campaña')
 
 
 urlpatterns = [
@@ -78,4 +79,6 @@ urlpatterns = [
     path('cargar-gestiones/', CargarGestionesViewSet.as_view(), name='cargar-gestiones'),
     path('editar_tipificacion/', WolkvoxEditarTipificacion.as_view(), name='editar_tipificaion'),
     path('tipificarWV/', WolkvoxTipificar.as_view(), name='tipificar'),
+    # path('recaudo_campaña/', RecaudoCampañaViewSet.as_view(), name='recaudo_campaña')
+    path('acuerdos/',CantidadAcuerdosPagoViewSet.as_view()),   
 ]
