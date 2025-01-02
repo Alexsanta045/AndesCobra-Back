@@ -10,8 +10,10 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.db.models import Count
 from rest_framework import status
 import pandas as pd
+from django.db.models import Sum
 
 
 from .obligaciones.cargarObligaciones import cargarObligaciones
@@ -249,5 +251,83 @@ class TipoGestionViewSet(viewsets.ModelViewSet):
   
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+# class RecaudoCampañaViewSet(APIView):
+#     def get(self, request, *args, **kwargs):
+#         campaña = request.query_params.get('campaña')
+#         fecha_inicio = request.query_params.get('fecha_inicio')
+#         fecha_fin = request.query_params.get('fecha_fin')
+
+#         if not campaña:
+#             return Response(
+#                 {"error": "El parámetro 'campaña' es obligatorio."},
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+        
+#         try:
+#             # Construir el filtro dinámico
+#             filtros = {'campaña': campaña}
+#             if fecha_inicio and fecha_fin:
+#                 filtros['fecha__range'] = [fecha_inicio, fecha_fin]
+
+#             # Filtrar registros y calcular la sumatoria
+#             registros = Obligaciones.objects.filter(**filtros)
+#             suma = registros.aggregate(total=Sum('valor_vencido'))['total'] or 0
+
+#             # Responder con la sumatoria
+#             return Response({"campaña": campaña, "suma": suma}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             return Response(
+#                 {"error": f"Error al procesar la solicitud: {str(e)}"},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
+
+
+class CantidadAcuerdosPagoViewSet(APIView):
+    def get(self, request):
+        campaña = request.query_params.get('campaña')
+
+        if not campaña:
+            return Response(
+                {'Error': 'El parámetro campaña es obligatorio'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        try:
+            acuerdos = Acuerdo_pago.objects.filter(
+                codigo_obligacion__campaña__id=campaña
+            )
+
+            # Agregar anotaciones para contar y sumar `valor_cuota`
+            resultados = acuerdos.values('estado').annotate(
+                total=Count('id'),
+                suma_valor_cuota=Sum('valor_cuota')
+            )
+
+            # Construir los datos de respuesta
+            data = {
+                estado['estado']: {
+                    'Cantidad': estado['total'],
+                    'valor_total': estado['suma_valor_cuota'] or 0
+                } for estado in resultados
+            }
+
+            # Calcular los totales generales
+            total_acuerdos = sum(estado['total'] for estado in resultados)
+            suma_total_cuotas = sum(estado['suma_valor_cuota'] or 0 for estado in resultados)
+
+            # Agregar los totales generales bajo la clave `Creados`
+            data['Creados'] = {
+                'Cantidad': total_acuerdos,
+                'valor_total': suma_total_cuotas
+            }
+
+            return Response(data)
+        except Exception as e:
+            return Response(
+                {'error': f'Error al obtener la cantidad de acuerdos de pago: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     
 
