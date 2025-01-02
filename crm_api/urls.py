@@ -37,8 +37,9 @@ router.register(r'telefono_codeudor', Telefono_codeudorViewSet, basename='Telefo
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
 router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUsuario') 
 router.register(r'CustomUser', CustomUserViewSet, basename='custom-user') 
-router.register(r'tipo_gestion', TipoGestionViewSet, basename='tipo_gestion') 
+router.register(r'tipo_gestion', TipoGestionViewSet, basename='tipo_gestion')
 router.register(r'historial_gestiones', HistorialGestionesViewSet, basename='historial_gestiones')
+router.register(r'codigos_estado', CodigosEstadoViewSet, basename='codigos_estado')
 # router.register(r'recaudo_campaña',RecaudoCampañaViewSet, basename='recaudo campaña')
 
 
