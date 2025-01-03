@@ -232,7 +232,17 @@ class Acuerdo_pagoViewSet(viewsets.ModelViewSet):
 
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
-
+    
+class CodigosEstadoViewSet(viewsets.ModelViewSet):
+    queryset = CodigosEstado.objects.all()
+    serializer_class = CodigosEstadoSerializer
+    
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_class = CodigosEstadoFilter
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
 
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all().order_by('-estado')  # Primero los activos

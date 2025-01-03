@@ -237,3 +237,9 @@ class TipoGestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tipo_gestion
         fields = '__all__'
+
+
+class CodigosEstadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CodigosEstado
+        fields = '__all__'

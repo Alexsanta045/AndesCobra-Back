@@ -87,3 +87,11 @@ class AcuerdoPagoFilter(django_filters.FilterSet):
     class Meta:
         model = Acuerdo_pago
         fields = ['codigo_obligacion','usuario_nombres', 'estado']
+        
+        
+class CodigosEstadoFilter(django_filters.FilterSet):
+    campaña = django_filters.CharFilter()
+    
+    class Meta:
+        model = CodigosEstado
+        fields = '__all__'

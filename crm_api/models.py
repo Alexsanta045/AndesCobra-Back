@@ -267,3 +267,12 @@ class PasswordChangeRequest(models.Model):
 
     def __str__(self):
         return f'Solicitud de {self.email_or_username} - {self.created_at} - {"Cambiada" if self.is_changed else "Pendiente"}'
+    
+
+class CodigosEstado(models.Model):
+    codigo = models.CharField()
+    nombre = models.CharField(max_length=100)
+    campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.codigo
