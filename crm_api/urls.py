@@ -8,6 +8,7 @@ from .consultasPersonalizadas.consultasPersonalizadas import *
 from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
+from .pagos.AcuerdosPagosMasivos import AcuerdosPagosMasivos
 from .views import *
 from .wolkvox_api.wolkvox_colgar import ColgarAPIView
 from .wolkvox_api.wolkvox_dial import DialWolkvoxAPIView
@@ -79,6 +80,6 @@ urlpatterns = [
     path('cargar-gestiones/', CargarGestionesViewSet.as_view(), name='cargar-gestiones'),
     path('editar_tipificacion/', WolkvoxEditarTipificacion.as_view(), name='editar_tipificaion'),
     path('tipificarWV/', WolkvoxTipificar.as_view(), name='tipificar'),
-    # path('recaudo_campaña/', RecaudoCampañaViewSet.as_view(), name='recaudo_campaña')
     path('acuerdos/',CantidadAcuerdosPagoViewSet.as_view()),   
+    path('subir_acuerdos_pago/', AcuerdosPagosMasivos.as_view(), name='subir_acuerdos_pago')
 ]
