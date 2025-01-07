@@ -46,13 +46,13 @@ class EjecutarPagos(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
         
-        # Aplicar el pago a valor_mora y ajustar el saldo restante en valor_pagado
-        if obligacion.valor_mora > 0:
-            if valor_pagado >= obligacion.valor_mora:
-                valor_pagado -= obligacion.valor_mora
-                obligacion.valor_mora = 0
+        # Aplicar el pago a valor_vencido y ajustar el saldo restante en valor_pagado
+        if obligacion.valor_vencido > 0:
+            if valor_pagado >= obligacion.valor_vencido:
+                valor_pagado -= obligacion.valor_vencido
+                obligacion.valor_vencido = 0
             else:
-                obligacion.valor_mora -= valor_pagado
+                obligacion.valor_vencido -= valor_pagado
                 valor_pagado = 0
 
         # Verificar si queda algún saldo para aplicar al capital
@@ -61,8 +61,8 @@ class EjecutarPagos(APIView):
         
         # Aplicar el pago al valor_capital si hay saldo restante
         try:
-            obligacion.valor_capital -= valor_pagado
-            obligacion.save()
+            # obligacion.valor_capital -= valor_pagado
+            # obligacion.save()
             
             # Crear un registro de pago en la tabla de pagos
             Pagos.objects.create(

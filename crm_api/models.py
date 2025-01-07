@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.utils.timezone import now
 import random
 
 class Roles(models.Model):
@@ -248,7 +249,7 @@ class Gestiones(models.Model):
     usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     resultado = models.ForeignKey(ResultadosGestion, on_delete=models.CASCADE)
-    fecha = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField(default=now)
     comentarios = models.TextField(max_length=200, null=True, blank=True)
     tipo_gestion = models.ForeignKey(Tipo_gestion, on_delete=models.CASCADE)
     
@@ -266,3 +267,12 @@ class PasswordChangeRequest(models.Model):
 
     def __str__(self):
         return f'Solicitud de {self.email_or_username} - {self.created_at} - {"Cambiada" if self.is_changed else "Pendiente"}'
+    
+
+class CodigosEstado(models.Model):
+    codigo = models.CharField()
+    nombre = models.CharField(max_length=100)
+    campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.codigo

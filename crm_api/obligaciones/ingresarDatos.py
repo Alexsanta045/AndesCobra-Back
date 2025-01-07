@@ -1,5 +1,6 @@
 from ..models import Clientes, Telefono_cliente, Codeudores, Telefono_codeudor, Referencias, Telefono_referencia, ClientesReferencias, Obligaciones, Campañas
 import pandas as pd
+from django.core.exceptions import ValidationError
 
 # Función para asignar un valor o None si el valor es NaN
 def asignar_o_none(valor):
@@ -62,19 +63,17 @@ def ingresar_datos(df, campaña):
 
         # Obtener la campaña
         campaña_instancia = Campañas.objects.get(id=campaña)
-        
-        # Verificar si la obligación ya existe y evitar duplicados
-        if Obligaciones.objects.filter(codigo_obligacion=fila['numero_obligacion']).exists():
-            cantObligacionesRepetidas += 1
-        else:
-            # Crear una nueva obligación
-            Obligaciones.objects.create(
+        try:
+            if Obligaciones.objects.filter(codigo_obligacion=fila['numero_obligacion']).exists():
+                cantObligacionesRepetidas += 1
+            
+            else: Obligaciones.objects.create(
                 codigo_obligacion = asignar_o_none(fila['numero_obligacion']),
                 campaña = campaña_instancia,
                 cliente = cliente_instancia,
                 codeudor = codeudor_instancia,
                 valor_vencido  = fila['valor_vencido'],
-                fecha_obligacion = asignar_o_none(fila['fecha_obligacion']),
+                fecha_obligacion = asignar_o_none(str(fila['fecha_obligacion']).strip() if pd.notna(fila['fecha_obligacion']) else fila['fecha_obligacion']),
                 fecha_vencimiento = asignar_o_none(fila['fecha_vencimiento']),
                 valor_obligacion = asignar_o_none(fila['valor_obligacion']),
                 valor_cuota = asignar_o_none(fila['valor_cuota']),
@@ -113,10 +112,12 @@ def ingresar_datos(df, campaña):
                 marca_especial = asignar_o_none(fila['marca_especial']),
                 fecha_corte_obligacion = asignar_o_none(fila['fecha_corte_obligacion']),
                 fecha_facturacion_obligacion = asignar_o_none(fila['fecha_facturacion_obligacion']),
-                # campos_opcionales = asignar_o_none(),
+                    # campos_opcionales = asignar_o_none(),
             )
-        
-        # Crear referencia si existe
+        except ValidationError as e:
+            print(f"Error en fila: {fila}")
+            print(f"Error específico: {e}")
+            raise
         referencia_instancia = None
         if not pd.isna(fila['nit_referencia']) or not pd.isna(fila['nombre_referencia']) or not pd.isna(fila['telefono_referencia']):
             referencia_instancia, _ = Referencias.objects.get_or_create(

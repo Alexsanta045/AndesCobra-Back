@@ -8,6 +8,7 @@ from .consultasPersonalizadas.consultasPersonalizadas import *
 from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
+from .pagos.AcuerdosPagosMasivos import AcuerdosPagosMasivos
 from .views import *
 from .wolkvox_api.wolkvox_colgar import ColgarAPIView
 from .wolkvox_api.wolkvox_dial import DialWolkvoxAPIView
@@ -16,6 +17,7 @@ from .consultasPersonalizadas.passwordChange import *
 from .consultasPersonalizadas.generalStatistics import *
 from .wolkvox_api.wolkvox_crear_tipificacion import WolkvoxCrearTipificacion
 from .wolkvox_api.wolkvox_editar_tipificacion import WolkvoxEditarTipificacion
+from .wolkvox_api.wolkvox_tipificar import WolkvoxTipificar
  
 
 router = DefaultRouter()
@@ -36,8 +38,10 @@ router.register(r'telefono_codeudor', Telefono_codeudorViewSet, basename='Telefo
 router.register(r'acuerdo_pago', Acuerdo_pagoViewSet, basename='Acuerdos de Pago')
 router.register(r'CampanasUsuario', CampañaUsuarioViewSet, basename='campanasUsuario') 
 router.register(r'CustomUser', CustomUserViewSet, basename='custom-user') 
-router.register(r'tipo_gestion', TipoGestionViewSet, basename='tipo_gestion') 
+router.register(r'tipo_gestion', TipoGestionViewSet, basename='tipo_gestion')
 router.register(r'historial_gestiones', HistorialGestionesViewSet, basename='historial_gestiones')
+router.register(r'codigos_estado', CodigosEstadoViewSet, basename='codigos_estado')
+# router.register(r'recaudo_campaña',RecaudoCampañaViewSet, basename='recaudo campaña')
 
 
 urlpatterns = [
@@ -74,6 +78,9 @@ urlpatterns = [
     path('estadisticas-asesor/', estadisticas_asesor, name='estadisticas_asesor'),
     path('cargarObligaciones/', CargarObligacionesViewSet.as_view(), name='cargar-obligaciones'),
     path('crear_tipificacion/', WolkvoxCrearTipificacion.as_view(), name='crear_tipificaion'),
+    path('cargar-gestiones/', CargarGestionesViewSet.as_view(), name='cargar-gestiones'),
     path('editar_tipificacion/', WolkvoxEditarTipificacion.as_view(), name='editar_tipificaion'),
-    
+    path('tipificarWV/', WolkvoxTipificar.as_view(), name='tipificar'),
+    path('acuerdos/',CantidadAcuerdosPagoViewSet.as_view()),   
+    path('subir_acuerdos_pago/', AcuerdosPagosMasivos.as_view(), name='subir_acuerdos_pago')
 ]

@@ -4,6 +4,7 @@ from rest_framework import status
 import requests
 
 class ColgarAPIView(APIView):
+
     def post(self, request):
         # Obtén los parámetros necesarios del request si aplica
         agent_id = request.data.get('agent_id')

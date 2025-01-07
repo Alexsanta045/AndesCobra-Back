@@ -63,7 +63,8 @@ def cargarObligaciones(id_campaña, archivo):
         # Eliminar las filas inválidas del DataFrame original
         df = df.drop(filas_invalidas)
 
-        # Ingresar los datos válidos en la base de datos
+        # Ingresar los datos
+        df['fecha_vencimiento'] = df['fecha_vencimiento'].apply(lambda x: x.date() if not pd.isnull(x) else None)
         ingresar_datos(df, id_campaña)
 
         # Retornar respuesta indicando que los datos fueron guardados exitosamente
