@@ -13,7 +13,7 @@ from rest_framework import status
 import pandas as pd
 from django.db.models import Sum
 
-from .pagos.AcuerdosPagoEstadisticas import estadisticasAcuerdosPago
+from .pagos.acuerdosPagoEstadisticas import estadisticasAcuerdosPago
 from .obligaciones.cargarObligaciones import cargarObligaciones
 from .gestionesMasivas.cargarGestiones import cargarGestiones
 from .filters import *
@@ -267,5 +267,7 @@ class CantidadAcuerdosPagoViewSet(APIView):
         campaña = request.query_params.get('campaña')
         return estadisticasAcuerdosPago(campaña)
 
-    
+class SubirPagosViewSet(viewsets.ModelViewSet):
+    queryset = Subir_pagos.objects.all()
+    serializer_class = SubirPagosSerializer
 

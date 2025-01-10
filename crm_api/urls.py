@@ -9,6 +9,7 @@ from .pagos.ActualizarAcuerdoPagos import ActualizarAcuerdosPagoView
 from .pagos.EjecutarPagos import EjecutarPagos
 from .pagos.PagosMasivos import PagosMasivos
 from .pagos.AcuerdosPagosMasivos import AcuerdosPagosMasivos
+from .pagos.SubirPagos import SubirPagos
 from .views import *
 from .wolkvox_api.wolkvox_colgar import ColgarAPIView
 from .wolkvox_api.wolkvox_dial import DialWolkvoxAPIView
@@ -18,7 +19,7 @@ from .consultasPersonalizadas.generalStatistics import *
 from .wolkvox_api.wolkvox_crear_tipificacion import WolkvoxCrearTipificacion
 from .wolkvox_api.wolkvox_editar_tipificacion import WolkvoxEditarTipificacion
 from .wolkvox_api.wolkvox_tipificar import WolkvoxTipificar
- 
+
 
 router = DefaultRouter()
 
@@ -41,6 +42,7 @@ router.register(r'CustomUser', CustomUserViewSet, basename='custom-user')
 router.register(r'tipo_gestion', TipoGestionViewSet, basename='tipo_gestion')
 router.register(r'historial_gestiones', HistorialGestionesViewSet, basename='historial_gestiones')
 router.register(r'codigos_estado', CodigosEstadoViewSet, basename='codigos_estado')
+router.register(r'ver_pagos_subidos', SubirPagosViewSet, basename='ver_pagos_subidos')
 # router.register(r'recaudo_campaña',RecaudoCampañaViewSet, basename='recaudo campaña')
 
 
@@ -82,5 +84,6 @@ urlpatterns = [
     path('editar_tipificacion/', WolkvoxEditarTipificacion.as_view(), name='editar_tipificaion'),
     path('tipificarWV/', WolkvoxTipificar.as_view(), name='tipificar'),
     path('acuerdos/',CantidadAcuerdosPagoViewSet.as_view()),   
-    path('subir_acuerdos_pago/', AcuerdosPagosMasivos.as_view(), name='subir_acuerdos_pago')
+    path('subir_acuerdos_pago/', AcuerdosPagosMasivos.as_view(), name='subir_acuerdos_pago'),
+    path('subir_pagos/', SubirPagos.as_view(), name='subir_pagos')
 ]

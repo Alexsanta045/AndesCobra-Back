@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.utils.timezone import now
 import random
+from django.conf import settings  # Para usar CustomUser si está en settings.AUTH_USER_MODEL
+
 
 class Roles(models.Model):
     nombre = models.CharField(max_length=25)
@@ -113,7 +115,7 @@ class Codeudores(models.Model):
 
 class Obligaciones(models.Model):
     codigo = models.CharField(max_length=25, unique=True, editable=False, primary_key=True)
-    codigo_obligacion = models.CharField(max_length=15, null=True, blank=True)
+    codigo_obligacion = models.CharField(max_length=20, null=True, blank=True)
     campaña = models.ForeignKey(Campañas, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     codeudor = models.ForeignKey(Codeudores, on_delete=models.SET_NULL, null=True, blank=True, related_name='obligaciones')
@@ -139,8 +141,8 @@ class Obligaciones(models.Model):
     rango_mora_inicial = models.CharField(max_length=70, null=True, blank=True)
     rango_mora_actual = models.CharField(max_length=70, null=True, blank=True)
     fecha_inicio_mora = models.DateField(null=True, blank=True)
-    tasa_interes = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
-    porc_gastos_cobranza = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    tasa_interes = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    porc_gastos_cobranza = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     valor_gastos_cobranza = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
     valor_iva_gastos = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     valor_otros_conceptos = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
@@ -152,8 +154,8 @@ class Obligaciones(models.Model):
     nit_empresa = models.CharField(max_length=15, null=True, blank=True)
     sucursal =  models.CharField(max_length=70, null=True, blank=True)
     regional = models.CharField(max_length=70, null=True, blank=True)
-    puntaje_credito = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
-    puntaje_comportamiento = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    puntaje_credito = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    puntaje_comportamiento = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     marca_especial = models.CharField(max_length=65, null=True, blank=True)
     fecha_corte_obligacion = models.DateField(null=True, blank=True)
     fecha_facturacion_obligacion = models.DateField(null=True, blank=True)
@@ -173,7 +175,6 @@ class Obligaciones(models.Model):
             codigo = str(random.randint(1000, 9223372036854775807))
         return codigo
     
-   
 class Telefono_codeudor(models.Model):
     numero = models.CharField(max_length=15, primary_key=True)
     codeudor = models.ForeignKey(Codeudores, on_delete=models.CASCADE)
@@ -208,17 +209,28 @@ class Telefono_referencia(models.Model):
 
     def __str__(self):
         return self.numero
-          
+
 class Acuerdo_pago(models.Model):
-    valor_cuota = models.FloatField()
-    fecha_pago = models.DateField()
-    codigo_obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)
-    estado = models.CharField(default="Vigente")
-    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    descripcion = models.CharField(max_length=60, default='sin descripcion')
-    
+    valor_cuota = models.FloatField()  # Monto de la cuota
+    fecha_pago = models.DateField()  # Fecha de pago
+    fecha_gestion = models.DateField()  # Fecha de gestión
+    codigo_resultado_gestion = models.CharField(max_length=100, null=True, blank=True)  # Resultado de la gestión
+    resultado_gestion = models.CharField(max_length=100, null=True, blank=True)  # Descripción del resultado de la gestión
+    codigo_obligacion = models.CharField(max_length=50)  # Código de obligación como un campo de texto
+    codigo_asesor = models.CharField(max_length=50, null=True, blank=True)  # Campo opcional
+    descripcion = models.CharField(max_length=60, default='sin descripcion', blank=True)  # Descripción opcional
+
     def __str__(self):
-        return f"obligacion: {self.codigo_obligacion} - valor: {self.valor_cuota} - fecha: {self.fecha_pago}"
+        return f"Acuerdo de pago {self.codigo_obligacion} - {self.codigo_asesor}"
+
+class Subir_pagos(models.Model):
+    valor_pago = models.FloatField()
+    fecha_pago = models.DateField()
+    codigo = models.CharField(max_length=30)
+
+class ArchivoProcesado(models.Model):
+    hash = models.CharField(max_length=32, unique=True)
+    fecha_procesado = models.DateTimeField(auto_now_add=True)
 
 class Pagos(models.Model):
     obligacion = models.ForeignKey(Obligaciones, on_delete=models.CASCADE)

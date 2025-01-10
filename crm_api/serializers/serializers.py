@@ -243,3 +243,8 @@ class CodigosEstadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CodigosEstado
         fields = '__all__'
+
+class SubirPagosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subir_pagos
+        fields = '__all__'
